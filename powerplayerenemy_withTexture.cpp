@@ -643,11 +643,11 @@ int Life::Collide(Player& player)
     return CheckCollision(player.x, player.y, x, y, 10, 20);
 }
 
-const int nShield = 2;
+const int nShield = 1;
 class Shield
 {
 public:
-    int x, y, state, d = 0;
+    int x, y, state, d = 0,n=500;
     void GenerateShield();
     void Draw();
     int Collide(Player& player);
@@ -924,15 +924,40 @@ int main() {
 
         }
 
-        for (int i = 0; i < nObstacle; i++)
+        for(int i=0; i<nShield; i++)
         {
-            if (obstacle[i].state == 1 && obstacle[i].Collide(player) == 1)
+            if(shield[i].state==1 && shield[i].Collide(player)==1)
             {
-                printf("Hit Obstacle!\n");
-                obstacle[i].state = 0;
-                player.health--;
+                printf("Shield Collected!\n");
+                shield[i].state=0;
+                shield[i].d=1;
+                
             }
+            if(shield[i].d==1 && shield[i].n>0)
+            {
+              DrawCircle(player.x,player.y-5,30,0);
+              shield[i].n--;
+            }
+            
         }
+        for(int i=0; i<nObstacle; i++)
+          {
+              if(obstacle[i].state==1 && obstacle[i].Collide(player)==1)
+              {
+                  printf("Hit Obstacle!\n");
+                  for(int j=0;j<nShield;j++)
+                  {
+                    if(shield[j].n>0)
+                      obstacle[i].state=1;
+                    else
+                    {
+                      obstacle[i].state=0;
+                    }
+                  }
+                  if(obstacle[i].state==0)
+                    player.health--;
+              }
+          }
 
         for (int i = 0; i < nLife; i++)
         {
@@ -944,24 +969,7 @@ int main() {
             }
         }
 
-        for (int i = 0; i < nShield; i++)
-        {
-            if (shield[i].state == 1 && shield[i].Collide(player) == 1)
-            {
-                printf("Shield Collected!\n");
-                shield[i].state = 0;
-                shield[i].d = 1;
-
-                //player.health++;
-            }
-        }
-        for (int i = 0; i < nShield; i++)
-        {
-            if (shield[i].d == 1)
-            {
-                DrawCircle(player.x, player.y - 5, 30, 0);
-            }
-        }
+   
         enemyCount = 0;
         for (int i = 0; i < enemies.size(); i++) {
             if (enemies[i].state == 1) {
