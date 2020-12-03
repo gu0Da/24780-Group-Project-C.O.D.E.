@@ -46,6 +46,17 @@ int CheckCollision(
     }
 }
 
+bool checkCollision(int objectX, int objectY, int objectW, int objectH, int targetX, int targetY, int targetW, int targetH)
+{
+    int dx = objectX - targetX;
+    int dy = objectY - targetY;
+    if (0 <= dx && dx < targetW && 0 <= dy && dy < targetH)
+    {
+        return true;
+    }
+    return false;
+}
+
 const int nParticlePerExplosion = 100;
 class Explosion
 {
@@ -275,7 +286,8 @@ public:
 class missileEnemy : public Enemy
 {
 public:
-    void Move();
+    void Move(Player& playerObject);
+    void checkEnemyCollision(Player& playerObject);
 };
 
 class standardEnemy : public Enemy
@@ -291,8 +303,11 @@ public:
     void generatePath3(const int startingYLocation);
     void generatePath4(const int startingYLocation);
     void generatePath5(const int startingyLocation);
+    void generatePath6(const int startingYLocation);
+    void generatePath7(const int startingyLocation);
     void generateRandomPath(const int startingYLocation);
-    void Move();
+    void Move(Player& playerObject, MissileStandard missileStandard[nMissiles]);
+    void checkEnemyCollision(Player& playerObject);
     void Draw();
     void Fire();
     void resetPosition();
@@ -304,9 +319,19 @@ class magnetEnemy : public Enemy
     //void Draw();
 };
 
-void missileEnemy::Move()
+void missileEnemy::Move(Player& playerObject)
 {
-    y += 20;
+    y += 3;
+    checkEnemyCollision(playerObject);
+}
+
+void missileEnemy::checkEnemyCollision(Player& playerObject)
+{
+    bool hit = checkCollision(x, y, 3 * xSize, 3 * ySize, playerObject.x, playerObject.y, 10, 20);
+    if (hit == true) {
+        state = 0;
+        playerObject.health--; // player loses 1 hp if hit by a missile
+    }
 }
 
 void standardEnemy::Fire()
@@ -322,6 +347,8 @@ void standardEnemy::Fire()
 
 standardEnemy::standardEnemy()
 {
+    x = 800;
+    y = 800;
     xSize = 20;
     ySize = 20;
     state = 1;
@@ -334,7 +361,7 @@ void standardEnemy::generatePath1(const int startingYLocation)
 {
     // Mapping some equation to the path
     for (float i = 0; i < 600; i++) { //assuming 100 fps (10ms sleep/frame)
-      // equation used is sin(x)
+        // equation used is sin(x)
         movementPathX.emplace_back(i); // need to change this to append to vector
         movementPathY.emplace_back((int)(startingYLocation + (float)100 * sin(i / 100.0)));
     }
@@ -344,7 +371,7 @@ void standardEnemy::generatePath2(const int startingYLocation)
 {
     // Mapping some equation to the path
     for (float i = 600; i > 0; i--) { // 200 elements for a 4 second enemy on screen time, assuming 50 fps (25ms sleep/frame)
-      // faster and larger than path 1
+        // faster and larger than path 1
         movementPathX.emplace_back(i); // need to change this to append to vector
         movementPathY.emplace_back((int)(startingYLocation + (float)200 * sin(i / 50.0)));
     }
@@ -360,7 +387,7 @@ void standardEnemy::generatePath3(const int startingYLocation)
 
 void standardEnemy::generatePath4(const int startingYLocation)
 {
-    for (float i = 600; i > 0; i--) {
+    for (float i = 599; i >= 0; i--) {
         movementPathX.emplace_back(i);
         movementPathY.emplace_back((0.5 * i) + startingYLocation);
     }
@@ -370,13 +397,29 @@ void standardEnemy::generatePath5(const int startingYLocation)
 {
     for (float i = 0; i < 600; i++) {
         movementPathX.emplace_back(i);
+        movementPathY.emplace_back((-0.1) * (i - 300) * (i - 300) + 200 + startingYLocation);
+    }
+}
+
+void standardEnemy::generatePath6(const int startingYLocation)
+{
+    for (float i = 599; i >= 0; i--) {
+        movementPathX.emplace_back(i);
+        movementPathY.emplace_back((-0.1) * (i - 300) * (i - 300) + 200 + startingYLocation);
+    }
+}
+
+void standardEnemy::generatePath7(const int startingYLocation)
+{
+    for (float i = 0; i < 600; i++) {
+        movementPathX.emplace_back(i);
         movementPathY.emplace_back(startingYLocation);
     }
 }
 
 void standardEnemy::generateRandomPath(const int startingYLocation)
 {
-    int randomNum = (rand() % 5) + 1; // 1 to 3
+    int randomNum = (rand() % 7) + 1; // 1 to 3
     switch (randomNum) {
     case 1:
         generatePath1(startingYLocation);
@@ -393,14 +436,42 @@ void standardEnemy::generateRandomPath(const int startingYLocation)
     case 5:
         generatePath5(startingYLocation);
         break;
+    case 6:
+        generatePath6(startingYLocation);
+        break;
+    case 7:
+        generatePath7(startingYLocation);
+        break;
     default:
         generatePath2(startingYLocation);
         break;
     }
 }
 
-void standardEnemy::Move()
+void standardEnemy::checkEnemyCollision(Player& playerObject) {
+    bool hit = checkCollision(x, y, 3 * xSize, 3 * ySize, playerObject.x, playerObject.y, 10, 20);
+    if (hit == true) {
+        state = 0;
+        playerObject.health--; // player loses 1 hp if hit by a missile
+    }
+
+    // add explosion effect? maybe smaller than player explosion
+
+}
+
+void standardEnemy::Move(Player& playerObject, MissileStandard missileStandard[nMissiles])
 {
+    if (state == 1) {
+        checkEnemyCollision(playerObject);
+        bool isShot = 0;
+        for (int i = 0; i < nMissiles; i++)
+        {
+            isShot = checkCollision(missileStandard[i].x, missileStandard[i].y, 7, 7, x, y, xSize, ySize);
+            if (isShot) {
+                state = 0;
+            }
+        }
+    }
     // cycle through movement path
     if (state == 1) {
         pathPlace++;
@@ -423,10 +494,12 @@ void standardEnemy::Move()
             m.state = 0;
         }
         if (m.state == 1) {
-            m.y += 3;
+            //m.y += 3;
+            m.Move(playerObject);
         }
     }
 }
+
 
 void standardEnemy::Draw()
 {
@@ -434,36 +507,23 @@ void standardEnemy::Draw()
         if (m.state == 1) {
             glColor3ub(0, 0, 0);
             glBegin(GL_QUADS);
-            glVertex2i(m.x, m.y);
-            glVertex2i(m.x + m.xSize, m.y);
+            glVertex2i(m.x - m.xSize, m.y - m.ySize);
+            glVertex2i(m.x + m.xSize, m.y - m.ySize);
             glVertex2i(m.x + m.xSize, m.y + m.ySize);
-            glVertex2i(m.x, m.y + m.ySize);
+            glVertex2i(m.x - m.xSize, m.y + m.ySize);
             glEnd();
         }
     }
 
     if (state == 1) {
         // just drawing a basic shape for now
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, texId[2]);
-
+        glColor3ub(255, 0, 0);
         glBegin(GL_QUADS);
-
-        glTexCoord2d(0.0, 0.0);
-        glVertex2i(x - 20, y - 20);
-
-        glTexCoord2d(1.0, 0.0);
-        glVertex2i(x + 20, y - 20);
-
-        glTexCoord2d(1.0, 1.0);
-        glVertex2i(x + 20, y + 20);
-
-        glTexCoord2d(0.0, 1.0);
-        glVertex2i(x - 20, y + 20);
-
+        glVertex2i(x - xSize, y - ySize);
+        glVertex2i(x + xSize, y - ySize);
+        glVertex2i(x + xSize, y + ySize);
+        glVertex2i(x - xSize, y + ySize);
         glEnd();
-
-        glDisable(GL_TEXTURE_2D);
     }
 
 }
@@ -628,9 +688,11 @@ int main() {
 
 
     srand(time(NULL));
-    const int nEnemy = 4;
 
-    standardEnemy enemies[nEnemy];
+    int enemyCount = 0;
+    const int nEnemy = 6;
+
+    std::vector<standardEnemy> enemies(nEnemy);
 
     Player player;
     int terminate = 0;
@@ -900,9 +962,20 @@ int main() {
                 DrawCircle(player.x, player.y - 5, 30, 0);
             }
         }
+        enemyCount = 0;
+        for (int i = 0; i < enemies.size(); i++) {
+            if (enemies[i].state == 1) {
+                enemyCount++;
+            }
+        }
+        while (enemyCount < 5) {
+            standardEnemy newEnemy;
+            enemies.emplace_back(newEnemy);
+            enemyCount++;
+        }
         for (auto& e : enemies)
         {
-            e.Move();
+            e.Move(player, missileStandard);
             e.Draw();
         }
 
