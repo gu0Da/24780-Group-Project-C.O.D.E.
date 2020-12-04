@@ -634,7 +634,7 @@ int main() {
 
     int level = 1;
     int score = 3;
-    int health = 5;
+    //int health = 5;
 
     InGameMenu game;
     GameMenu menu;
@@ -919,7 +919,7 @@ int main() {
                     e.Draw();
                 }
 
-                //int health = player.health;
+                int health = player.health;
 
                 char* cstr = new char[player.missileType.length() + 1];
                 strcpy(cstr, player.missileType.c_str());
