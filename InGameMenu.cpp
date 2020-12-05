@@ -168,7 +168,7 @@ void InGameMenu::AddText(int level, int score, int health, char* weapon)
     showlevel.CleanUp();
     showweapon.CleanUp();
     showscore.CleanUp();
-    showlevel.Add("Level: ");
+    showlevel.Add("Live: ");
     showlevel.Add(level + '0');
     showscore.Add("Score: ");
     showscore.Add(score + '0');
@@ -221,7 +221,7 @@ void InGameMenu::Display(int level, int score, int health, char* weapon)
     glRasterPos2d(15, 120);
     YsGlDrawFontBitmap16x20(showscore.GetPointer());
 
-    if (health == 0)
+    if (level == 0)
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glColor3f(0.0, 0, 0);
