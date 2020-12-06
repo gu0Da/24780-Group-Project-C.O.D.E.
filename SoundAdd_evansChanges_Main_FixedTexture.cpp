@@ -37,10 +37,15 @@ void DrawAllMissiles();
 void DrawRect(int blockX, int blockY, int blockSizeX, int blockSizeY); //used for demo health bar
 void DrawCircle(int cx, int cy, int rad, int fill); //used for demo force field
 
+int absValue(int i)
+{
+    return i < 0 ? -i : i;
+}
+
 bool checkCollision(int objectX, int objectY, int objectW, int objectH, int targetX, int targetY, int targetW, int targetH)
 {
-    int dx = abs(objectX - targetX);
-    int dy = abs(objectY - targetY);
+    int dx = absValue(objectX - targetX);
+    int dy = absValue(objectY - targetY);
     if (0 <= dx && dx < (targetW + objectW) && 0 <= dy && dy < (targetH + objectW))
     {
         return true;
@@ -908,6 +913,7 @@ void missileEnemy::checkEnemyCollision(Player& playerObject)
     if (hit == true) {
         state = 0;
         playerObject.health--; // player loses 1 hp if hit by a missile
+        // player takes a hit - play sound
     }
 }
 
@@ -920,6 +926,7 @@ void standardEnemy::Fire()
     newMissile.xSize = 5;
     newMissile.ySize = 5;
     missilesFired.emplace_back(newMissile);
+    // enemy shooting - play sound (something quietish? - this sound happens a lot)
 }
 
 standardEnemy::standardEnemy()
@@ -1031,6 +1038,7 @@ void standardEnemy::checkEnemyCollision(Player& playerObject) {
     if (hit == true) {
         state--;
         playerObject.health--; // player loses 1 hp if hit by a missile
+        // player takes a hit - play sound
     }
 }
 
@@ -1040,7 +1048,7 @@ void standardEnemy::Move(Player& playerObject, MissileStandard missileStandard[n
     if (state > 0) {
         checkEnemyCollision(playerObject);
         for (int i = 0; i < shield.size(); i++) {
-            if (shield[i].state == 0) {
+            if (shield[i].d == 1) {
                 shieldOn = 1;
                 break;
             }
@@ -1054,6 +1062,7 @@ void standardEnemy::Move(Player& playerObject, MissileStandard missileStandard[n
                 missileStandard[i].state = 0;
                 if (state == 0) {
                     score+=2;
+                    // enemy death - play sound
                 }
             }
         }
@@ -1065,6 +1074,7 @@ void standardEnemy::Move(Player& playerObject, MissileStandard missileStandard[n
                 missileRapid[i].state = 0;
                 if (state == 0) {
                     score+=2;
+                    // enemy death - play sound
                 }
             }
         }
@@ -1076,6 +1086,7 @@ void standardEnemy::Move(Player& playerObject, MissileStandard missileStandard[n
                 missileSpreadM[i].state = 0;
                 if (state == 0) {
                     score+=2;
+                    // enemy death - play sound
                 }
             }
         }
@@ -1087,6 +1098,7 @@ void standardEnemy::Move(Player& playerObject, MissileStandard missileStandard[n
                 missileSpreadL[i].state = 0;
                 if (state == 0) {
                     score+=2;
+                    // enemy death - play sound
                 }
             }
         }
@@ -1098,6 +1110,7 @@ void standardEnemy::Move(Player& playerObject, MissileStandard missileStandard[n
                 missileSpreadR[i].state = 0;
                 if (state == 0) {
                     score+=2;
+                    // enemy death - play sound
                 }
             }
         }
