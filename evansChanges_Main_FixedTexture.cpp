@@ -7,6 +7,7 @@ Simulate hit: H
 */
 
 #define _CRT_SECURE_NO_WARNINGS
+#define _CRT_NONSTDC_NO_DEPRECATE
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -1469,9 +1470,11 @@ int main() {
             strcpy(cstr, player.missileType.c_str());
 
             //printf("Live = %d",playerLives);
+            char num[3];
+            itoa(score, num, 10);
             if(playerLives!=0)
             {
-                game.Display(playerLives, score, health, cstr);
+                game.Display(playerLives, num, health, cstr);
                 delete[] cstr;
             }
             else
@@ -1484,6 +1487,7 @@ int main() {
                 else
                 {
                     playerLives=3;
+                    score = 0;
                 }
             }
 
