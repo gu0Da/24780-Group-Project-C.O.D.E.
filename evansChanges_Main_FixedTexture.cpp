@@ -1152,325 +1152,342 @@ int main() {
         png[5].rgba);
 
     int level = menu.Background();
-    while (level != 3) {
-        if (level == 1)
+
+    if (level == 1)
+    {
+        while (terminate == 0)
+
         {
-            while (terminate == 0)
+            FsPollDevice();
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+            glColor4d(1.0, 1.0, 1.0, 2.0);
+            //Transparent
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+            glEnable(GL_TEXTURE_2D);  // Begin using texture mapping
+            //Draw Background
+            glBindTexture(GL_TEXTURE_2D, texId[0]);
+
+            glBegin(GL_QUADS);
+
+            glTexCoord2d(0.0, 0.0);
+            glVertex2i(0, 0);
+
+            glTexCoord2d(1.0, 0.0);
+            glVertex2i(600, 0);
+
+            glTexCoord2d(1.0, 1.0);
+            glVertex2i(600, 800);
+
+            glTexCoord2d(0.0, 1.0);
+            glVertex2i(0, 800);
+
+            glEnd();
+
+            glDisable(GL_TEXTURE_2D);  // End using texture mapping
+
+            int key = FsInkey();
+
+            //only can control player when not spawning
+            //The controls are just for demoing okay to change
+            switch (key)
             {
-                FsPollDevice();
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-                glColor4d(1.0, 1.0, 1.0, 2.0);
-                //Transparent
-                glEnable(GL_BLEND);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-                glEnable(GL_TEXTURE_2D);  // Begin using texture mapping
-                //Draw Background
-                glBindTexture(GL_TEXTURE_2D, texId[0]);
-
-                glBegin(GL_QUADS);
-
-                glTexCoord2d(0.0, 0.0);
-                glVertex2i(0, 0);
-
-                glTexCoord2d(1.0, 0.0);
-                glVertex2i(600, 0);
-
-                glTexCoord2d(1.0, 1.0);
-                glVertex2i(600, 800);
-
-                glTexCoord2d(0.0, 1.0);
-                glVertex2i(0, 800);
-
-                glEnd();
-
-                glDisable(GL_TEXTURE_2D);  // End using texture mapping
-
-                int key = FsInkey();
-
-                //only can control player when not spawning
-                //The controls are just for demoing okay to change
-                switch (key)
+            case FSKEY_ESC:
+                terminate = 1;
+                break;
+            case FSKEY_SPACE:
+                player.Shoot();
+                break;
+            case FSKEY_S://switch missile type
+                player.ChangeMissile("Standard");
+                break;
+            case FSKEY_B://Switch missile type
+                player.ChangeMissile("Rapid");
+                break;
+            case FSKEY_P://Switch missile type
+                player.ChangeMissile("Spread");
+                break;
+            case FSKEY_H://Simulate a hit
+                player.health = player.health - 1;
+                break;
+            }
+            if (0 != FsGetKeyState(FSKEY_SPACE) && player.missileType == "Rapid")///Change
+            {
+                player.Shoot();
+            }
+            if (0 != FsGetKeyState(FSKEY_LEFT))
+            {
+                player.x -= 10;
+                if (player.x <= 0)
                 {
-                case FSKEY_ESC:
-                    terminate = 1;
-                    break;
-                case FSKEY_SPACE:
-                    player.Shoot();
-                    break;
-                case FSKEY_S://switch missile type
-                    player.ChangeMissile("Standard");
-                    break;
-                case FSKEY_B://Switch missile type
-                    player.ChangeMissile("Rapid");
-                    break;
-                case FSKEY_P://Switch missile type
-                    player.ChangeMissile("Spread");
-                    break;
-                case FSKEY_H://Simulate a hit
-                    player.health = player.health - 1;
-                    break;
+                    player.x = 0;
                 }
-                if (0 != FsGetKeyState(FSKEY_SPACE) && player.missileType == "Rapid")///Change
+            }
+            if (0 != FsGetKeyState(FSKEY_RIGHT))
+            {
+                player.x += 10;
+                if (player.x >= 600)
                 {
-                    player.Shoot();
+                    player.x = 600;
                 }
-                if (0 != FsGetKeyState(FSKEY_LEFT))
+            }
+            if (0 != FsGetKeyState(FSKEY_UP))
+            {
+                player.y -= 10;
+                if (player.y <= 0)
                 {
-                    player.x -= 10;
-                    if (player.x <= 0)
-                    {
-                        player.x = 0;
-                    }
+                    player.y = 0;
                 }
-                if (0 != FsGetKeyState(FSKEY_RIGHT))
+            }
+            if (0 != FsGetKeyState(FSKEY_DOWN))
+            {
+                player.y += 10;
+                if (player.y >= 800)
                 {
-                    player.x += 10;
-                    if (player.x >= 600)
-                    {
-                        player.x = 600;
-                    }
+                    player.y = 800;
                 }
-                if (0 != FsGetKeyState(FSKEY_UP))
-                {
-                    player.y -= 10;
-                    if (player.y <= 0)
-                    {
-                        player.y = 0;
-                    }
-                }
-                if (0 != FsGetKeyState(FSKEY_DOWN))
-                {
-                    player.y += 10;
-                    if (player.y >= 800)
-                    {
-                        player.y = 800;
-                    }
-                }
-
-                DrawAllMissiles(); //Ensures all missiles the are shot are drawn independent of what weapon type player is currently holding IE: will draw black missiles still in motion even if player switches to red missiles
-
-                player.Initialize(); //does nothing if player state is 1 or not spawning, else will perform respawn behavior and animation
-
-                while(coinscreen<4)
-                {
-                    Coins newcoins;
-                    coins.emplace_back(newcoins);
-                    newcoins.GenerateCoins();
-                    coinscreen++;
-                }
-                while(obsscreen<5)
-                {
-                    Obstacles newobstacle;
-                    obstacle.emplace_back(newobstacle);
-                    newobstacle.GenerateObstacle();
-                    obsscreen++; 
-                }
-                while(powercount<2)
-                {    
-                    p++;
-                    if(p%11==0)
-                    {
-                        if(playerLives==4)
-                        {
-
-                        }
-                        else
-                        {
-                            Life extralife;
-                            extralife.GenerateLife();
-                            life.emplace_back(extralife);
-                            powercount++;
-                        }
-                        
-                        
-                        
-                    }
-                    if(p%13==0)
-                    {
-                        
-                        Shield newshield;
-                        newshield.GenerateShield();
-                        shield.emplace_back(newshield);
-                        powercount++;
-                        
-                    }
-                    if(p%8==0)
-                    {
-                        
-                        Weapons newweapons;
-                        newweapons.GenerateWeapons();
-                        newweapons.type=2;
-                        weapons.emplace_back(newweapons);
-                        powercount++;
-                    }
-
-                    if(p%15==0)
-                    {
-                        Weapons newweapons;
-                        newweapons.GenerateWeapons();
-                        newweapons.type=3;
-                        weapons.emplace_back(newweapons);   
-                        powercount++;
-                    }
-                    if(p%17==0)
-                    {
-                        Weapons newweapons;
-                        newweapons.type=1;
-                        newweapons.GenerateWeapons();
-                        weapons.emplace_back(newweapons);
-                        powercount++;
-                    }
-                    
-                       
-                }
-
-                for (int i = 0; i < obstacle.size(); i++)
-                    obstacle[i].Draw();
-
-                for (int i = 0; i < life.size(); i++)
-                    life[i].Draw();
-
-                for (int i = 0; i < shield.size(); i++)
-                    shield[i].Draw();
-
-                for (int i = 0; i < coins.size(); i++)
-                    coins[i].Draw();
-
-                for (int i = 0; i < weapons.size(); i++)
-                    weapons[i].Draw();
-                //Health bar for demoing
-                //if (player.health > 0) DrawRect(40, 120, 10 * player.health, 20);
-
-                //draw player always when not mid spawning or dead
-                if (player.state == 1) player.Draw();
-
-                //Just for demo: force field around player while spawning
-                if (player.spawning) {
-                    DrawCircle(player.x, player.y - 5, 30, 0);
-                }
-
-                //If player health reaches 0 and player is not mid spawn, the player explodes
-                if (player.health <= 0 && !player.spawning) {
-                    player.state = 0;
-                   
-                    if (true == player.e.Begin(player.x, player.y)) {
-                        playerLives--;
-                    }
-
-                }
-                //function calls to conitnue explosion
-                if (player.e.state == 1) {
-                    player.e.Move();
-                    player.e.Draw();
-                    //Once explosion reaches a certain point player will begin to respawn
-                    if (player.e.counter > 50) {
-                        player.respawn = true;
-                        player.spawning = true;
-                    }
-
-
-                }
-
-                for(int i=0; i<shield.size(); i++)
-                {
-                    if(shield[i].state==1 && shield[i].Collide(player)==1&&!player.spawning)
-                    {
-                        //sound-powerup shield
-                        shield[i].state=0;
-                        shield[i].d=1;
-                        powercount--;
-                        
-                    }
-                    if(shield[i].d==1 && shield[i].n>0)
-                    {
-                        DrawCircle(player.x,player.y-5,30,0);
-                        shield[i].n--;
-                    }
-                    if(shield[i].n<0)
-                        shield[i].d=0;
-                    
-                }
-                for(int i=0; i<obstacle.size(); i++)
-                {
-                    if(obstacle[i].state==1 && obstacle[i].Collide(player)==1&&!player.spawning)
-                    {
-                        if(shield.back().d==1&&shield.back().n>0)
-                          obstacle[i].state=1;
-                        else
-                        {
-                          //sound-obstacle collision
-                          obstacle[i].state=0;
-                          obsscreen--;
-                        }
-                        if(obstacle[i].state==0)
-                            player.health--;
-                    }
-                }
-
-                for (int i = 0; i <life.size(); i++)
-                {
-                    if (life[i].state == 1 && life[i].Collide(player) == 1&&!player.spawning)
-                    {
-                        //sound-acquire life powerup
-                        life[i].state = 0;
-                        if(playerLives>=4)
-                            playerLives=4;
-                        else
-                        {
-                            playerLives++;
-                        }
-                       
-                        powercount--;
-                    }
-                }
-
-                for (int i = 0; i <coins.size(); i++)
-                {
-                    if (coins[i].state == 1 && coins[i].Collide(player) == 1&&!player.spawning)
-                    {
-                        //sound-collected coins
-                        coins[i].state = 0;
-                        score+=10;
-                        coinscreen--;
-                    }
-                }
-
-                for (int i = 0; i <weapons.size(); i++)
-                {
-                    if (weapons[i].state == 1 && weapons[i].Collide(player) == 1&&!player.spawning)
-                    {
-                        //sound-change weapon
-                        weapons[i].state = 0;
-                        if(weapons[i].type==1)
-                            player.ChangeMissile("Standard");
-                        if(weapons[i].type==2)
-                            player.ChangeMissile("Rapid");
-                        if(weapons[i].type==3)
-                            player.ChangeMissile("Spread");
-                        powercount--;
-                    }
-                }
-
-                int health = player.health;
-
-                char* cstr = new char[player.missileType.length() + 1];
-                strcpy(cstr, player.missileType.c_str());
-
-                //printf("Live = %d",playerLives);
-                game.Display(playerLives, score, health, cstr);
-                delete[] cstr;
-
-                glFlush();
-                FsSwapBuffers();
-                FsSleep(25);
             }
 
-        }
-    }
+            DrawAllMissiles(); //Ensures all missiles the are shot are drawn independent of what weapon type player is currently holding IE: will draw black missiles still in motion even if player switches to red missiles
 
+            player.Initialize(); //does nothing if player state is 1 or not spawning, else will perform respawn behavior and animation
+
+            while(coinscreen<4)
+            {
+                Coins newcoins;
+                coins.emplace_back(newcoins);
+                newcoins.GenerateCoins();
+                coinscreen++;
+            }
+            while(obsscreen<5)
+            {
+                Obstacles newobstacle;
+                obstacle.emplace_back(newobstacle);
+                newobstacle.GenerateObstacle();
+                obsscreen++; 
+            }
+            while(powercount<2)
+            {    
+                p++;
+                if(p%11==0)
+                {
+                    if(playerLives==4)
+                    {
+
+                    }
+                    else
+                    {
+                        Life extralife;
+                        extralife.GenerateLife();
+                        life.emplace_back(extralife);
+                        powercount++;
+                    }
+
+
+
+                }
+                if(p%13==0)
+                {
+
+                    Shield newshield;
+                    newshield.GenerateShield();
+                    shield.emplace_back(newshield);
+                    powercount++;
+
+                }
+                if(p%8==0)
+                {
+
+                    Weapons newweapons;
+                    newweapons.GenerateWeapons();
+                    newweapons.type=2;
+                    weapons.emplace_back(newweapons);
+                    powercount++;
+                }
+
+                if(p%15==0)
+                {
+                    Weapons newweapons;
+                    newweapons.GenerateWeapons();
+                    newweapons.type=3;
+                    weapons.emplace_back(newweapons);   
+                    powercount++;
+                }
+                if(p%17==0)
+                {
+                    Weapons newweapons;
+                    newweapons.type=1;
+                    newweapons.GenerateWeapons();
+                    weapons.emplace_back(newweapons);
+                    powercount++;
+                }
+
+
+            }
+
+            for (int i = 0; i < obstacle.size(); i++)
+                obstacle[i].Draw();
+
+            for (int i = 0; i < life.size(); i++)
+                life[i].Draw();
+
+            for (int i = 0; i < shield.size(); i++)
+                shield[i].Draw();
+
+            for (int i = 0; i < coins.size(); i++)
+                coins[i].Draw();
+
+            for (int i = 0; i < weapons.size(); i++)
+                weapons[i].Draw();
+            //Health bar for demoing
+            //if (player.health > 0) DrawRect(40, 120, 10 * player.health, 20);
+
+            //draw player always when not mid spawning or dead
+            if (player.state == 1) player.Draw();
+
+            //Just for demo: force field around player while spawning
+            if (player.spawning) {
+                DrawCircle(player.x, player.y - 5, 30, 0);
+            }
+
+            //If player health reaches 0 and player is not mid spawn, the player explodes
+            if (player.health <= 0 && !player.spawning) {
+                player.state = 0;
+
+                if (true == player.e.Begin(player.x, player.y)) {
+                    playerLives--;
+                }
+
+            }
+            //function calls to conitnue explosion
+            if (player.e.state == 1) {
+                player.e.Move();
+                player.e.Draw();
+                //Once explosion reaches a certain point player will begin to respawn
+                if (player.e.counter > 50) {
+                    player.respawn = true;
+                    player.spawning = true;
+                }
+
+
+            }
+
+            for(int i=0; i<shield.size(); i++)
+            {
+                if(shield[i].state==1 && shield[i].Collide(player)==1&&!player.spawning)
+                {
+                    //sound-powerup shield
+                    shield[i].state=0;
+                    shield[i].d=1;
+                    powercount--;
+
+                }
+                if(shield[i].d==1 && shield[i].n>0)
+                {
+                    DrawCircle(player.x,player.y-5,30,0);
+                    shield[i].n--;
+                }
+                if(shield[i].n<0)
+                    shield[i].d=0;
+
+            }
+            for(int i=0; i<obstacle.size(); i++)
+            {
+                if(obstacle[i].state==1 && obstacle[i].Collide(player)==1&&!player.spawning)
+                {
+                    if(shield.back().d==1&&shield.back().n>0)
+                      obstacle[i].state=1;
+                    else
+                    {
+                      //sound-obstacle collision
+                      obstacle[i].state=0;
+                      obsscreen--;
+                    }
+                    if(obstacle[i].state==0)
+                        player.health--;
+                }
+            }
+
+            for (int i = 0; i <life.size(); i++)
+            {
+                if (life[i].state == 1 && life[i].Collide(player) == 1&&!player.spawning)
+                {
+                    //sound-acquire life powerup
+                    life[i].state = 0;
+                    if(playerLives>=4)
+                        playerLives=4;
+                    else
+                    {
+                        playerLives++;
+                    }
+
+                    powercount--;
+                }
+            }
+
+            for (int i = 0; i <coins.size(); i++)
+            {
+                if (coins[i].state == 1 && coins[i].Collide(player) == 1&&!player.spawning)
+                {
+                    //sound-collected coins
+                    coins[i].state = 0;
+                    score+=10;
+                    coinscreen--;
+                }
+            }
+
+            for (int i = 0; i <weapons.size(); i++)
+            {
+                if (weapons[i].state == 1 && weapons[i].Collide(player) == 1&&!player.spawning)
+                {
+                    //sound-change weapon
+                    weapons[i].state = 0;
+                    if(weapons[i].type==1)
+                        player.ChangeMissile("Standard");
+                    if(weapons[i].type==2)
+                        player.ChangeMissile("Rapid");
+                    if(weapons[i].type==3)
+                        player.ChangeMissile("Spread");
+                    powercount--;
+                }
+            }
+
+            int health = player.health;
+
+            char* cstr = new char[player.missileType.length() + 1];
+            strcpy(cstr, player.missileType.c_str());
+
+            //printf("Live = %d",playerLives);
+            if(playerLives!=0)
+            {
+                game.Display(playerLives, score, health, cstr);
+                delete[] cstr;
+            }
+            else
+            {
+                auto n=game.EndMenu();
+                if(n==0)
+                {
+                    terminate=1;
+                }
+                else
+                {
+                    playerLives=3;
+                }
+            }
+
+            glFlush();
+            FsSwapBuffers();
+            FsSleep(25);
+        }
+
+    }
+    else
+    {
+        FsCloseWindow();
+    }
     return 0;
 }
 
