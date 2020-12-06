@@ -36,8 +36,8 @@ public:
 	TextString showweapon;
 	TextString showscore;
 	TextString showresult;
-	void AddText(int level, int score, int health, char* weapon);
-	void Display(int level, int score, int health, char* weapon);
+	void AddText(int level, char* score, int health, char* weapon);
+	void Display(int level, char* score, int health, char* weapon);
 	int EndMenu(void);
 };
 #pragma once
