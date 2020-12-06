@@ -28,8 +28,8 @@ const int nMissiles = 100;
 int playerLives = 3;
 
 using namespace std;
-YsRawPngDecoder png[6];
-GLuint texId[6];
+YsRawPngDecoder png[8];
+GLuint texId[8];
 
 void DrawAllMissiles();
 void DrawRect(int blockX, int blockY, int blockSizeX, int blockSizeY); //used for demo health bar
@@ -203,7 +203,7 @@ bool MissileStandard::TryShoot(int x0, int y0, int index)//Change
 }
 void MissileStandard::Draw(void)
 {
-    glColor3ub(255, 0, 0);
+    //glColor3ub(255, 0, 0);
     glBegin(GL_QUADS);
     glVertex2i(x - 2, y);
     glVertex2i(x + 2, y);
@@ -268,7 +268,7 @@ bool MissileRapid::TryShoot(int x0, int y0)
 }
 void MissileRapid::Draw(void)
 {
-    glColor3ub(0, 255, 255);
+    //glColor3ub(0, 255, 255);
     glBegin(GL_QUADS);
     glVertex2i(x - 2, y);
     glVertex2i(x + 2, y);
@@ -335,7 +335,7 @@ bool MissileSpreadM::TryShoot(int x0, int y0)
 }
 void MissileSpreadM::Draw(void)
 {
-    glColor3ub(0, 255, 0);
+    //glColor3ub(0, 255, 0);
     glBegin(GL_QUADS);
     glVertex2i(x - 2, y);
     glVertex2i(x + 2, y);
@@ -401,7 +401,7 @@ bool MissileSpreadL::TryShoot(int x0, int y0)
 }
 void MissileSpreadL::Draw(void)
 {
-    glColor3ub(0, 255, 0);
+    /*glColor3ub(0, 255, 0);*/
     glBegin(GL_QUADS);
     glVertex2i(x - 2, y);
     glVertex2i(x + 2, y);
@@ -467,7 +467,7 @@ bool MissileSpreadR::TryShoot(int x0, int y0)
 }
 void MissileSpreadR::Draw(void)
 {
-    glColor3ub(0, 255, 0);
+    /*glColor3ub(0, 255, 0);*/
     glBegin(GL_QUADS);
     glVertex2i(x - 2, y);
     glVertex2i(x + 2, y);
@@ -850,13 +850,33 @@ void Life::Draw()
 {
     if (state != 0)
     {
-        glColor3ub(255, 192, 203);
+        /*glColor3ub(255, 192, 203);
         glBegin(GL_QUADS);
         glVertex2i(x - 10, y);
         glVertex2i(x + 10, y);
         glVertex2i(x + 10, y + 20);
         glVertex2i(x - 10, y + 20);
+        glEnd();*/
+
+        glEnable(GL_TEXTURE_2D);  // Begin using texture mapping
+        glBindTexture(GL_TEXTURE_2D, texId[5]);
+
+        glBegin(GL_QUADS);
+
+        glTexCoord2d(0.0, 0.0);
+        glVertex2i(x - 15, y - 15);
+
+        glTexCoord2d(1.0, 0.0);
+        glVertex2i(x + 15, y - 15);
+
+        glTexCoord2d(1.0, 1.0);
+        glVertex2i(x + 15, y + 15);
+
+        glTexCoord2d(0.0, 1.0);
+        glVertex2i(x - 15, y + 15);
+
         glEnd();
+        glDisable(GL_TEXTURE_2D);
     }
 
 }
@@ -889,13 +909,33 @@ void Shield::Draw()
 {
     if (state != 0)
     {
-        glColor3ub(0, 0, 128);
+        /*glColor3ub(0, 0, 128);
         glBegin(GL_QUADS);
         glVertex2i(x - 10, y);
         glVertex2i(x + 10, y);
         glVertex2i(x + 10, y + 20);
         glVertex2i(x - 10, y + 20);
+        glEnd();*/
+
+        glEnable(GL_TEXTURE_2D);  // Begin using texture mapping
+        glBindTexture(GL_TEXTURE_2D, texId[4]);
+
+        glBegin(GL_QUADS);
+
+        glTexCoord2d(0.0, 0.0);
+        glVertex2i(x - 15, y - 15);
+
+        glTexCoord2d(1.0, 0.0);
+        glVertex2i(x + 15, y - 15);
+
+        glTexCoord2d(1.0, 1.0);
+        glVertex2i(x + 15, y + 15);
+
+        glTexCoord2d(0.0, 1.0);
+        glVertex2i(x - 15, y + 15);
+
         glEnd();
+        glDisable(GL_TEXTURE_2D);
     }
 
 }
@@ -927,13 +967,33 @@ void Coins::Draw()
 {
     if (state != 0)
     {
-        glColor3ub(255, 255, 0);
+        /*glColor3ub(255, 255, 0);
         glBegin(GL_QUADS);
         glVertex2i(x - 10, y);
         glVertex2i(x + 10, y);
         glVertex2i(x + 10, y + 20);
         glVertex2i(x - 10, y + 20);
+        glEnd();*/
+
+        glEnable(GL_TEXTURE_2D);  // Begin using texture mapping
+        glBindTexture(GL_TEXTURE_2D, texId[6]);
+
+        glBegin(GL_QUADS);
+
+        glTexCoord2d(0.0, 0.0);
+        glVertex2i(x - 15, y - 15);
+
+        glTexCoord2d(1.0, 0.0);
+        glVertex2i(x + 15, y - 15);
+
+        glTexCoord2d(1.0, 1.0);
+        glVertex2i(x + 15, y + 15);
+
+        glTexCoord2d(0.0, 1.0);
+        glVertex2i(x - 15, y + 15);
+
         glEnd();
+        glDisable(GL_TEXTURE_2D);
     }
 
 }
@@ -964,7 +1024,7 @@ void Weapons::Draw()
 {
     if (state != 0)
     {
-        if(type==1)
+        /*if(type==1)
             glColor3ub(255,0,0);
         if(type==2)
             glColor3ub(0, 255, 0);
@@ -975,7 +1035,27 @@ void Weapons::Draw()
         glVertex2i(x + 10, y);
         glVertex2i(x + 10, y + 20);
         glVertex2i(x - 10, y + 20);
+        glEnd();*/
+
+        glEnable(GL_TEXTURE_2D);  // Begin using texture mapping
+        glBindTexture(GL_TEXTURE_2D, texId[7]);
+
+        glBegin(GL_QUADS);
+
+        glTexCoord2d(0.0, 0.0);
+        glVertex2i(x - 15, y - 15);
+
+        glTexCoord2d(1.0, 0.0);
+        glVertex2i(x + 15, y - 15);
+
+        glTexCoord2d(1.0, 1.0);
+        glVertex2i(x + 15, y + 15);
+
+        glTexCoord2d(0.0, 1.0);
+        glVertex2i(x - 15, y + 15);
+
         glEnd();
+        glDisable(GL_TEXTURE_2D);
     }
 
 }
@@ -1037,6 +1117,9 @@ int main() {
     png[3].Decode("asteroid.png");
     png[4].Decode("shield.png");
     png[5].Decode("health.png");
+    png[6].Decode("coin.png");
+    png[7].Decode("multi_bullet.png");
+
     glGenTextures(1, &texId[0]);  // Reserve one texture identifier
     glBindTexture(GL_TEXTURE_2D, texId[0]);  // Making the texture identifier current (or bring it to the deck)
 
@@ -1151,6 +1234,43 @@ int main() {
         GL_UNSIGNED_BYTE,
         png[5].rgba);
 
+    glGenTextures(1, &texId[6]);  // Reserve one texture identifier
+    glBindTexture(GL_TEXTURE_2D, texId[6]);  // Making the texture identifier current (or bring it to the deck)
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glTexImage2D
+    (GL_TEXTURE_2D,
+        0,
+        GL_RGBA,
+        png[6].wid,
+        png[6].hei,
+        0,
+        GL_RGBA,
+        GL_UNSIGNED_BYTE,
+        png[6].rgba);
+
+    glGenTextures(1, &texId[7]);  // Reserve one texture identifier
+    glBindTexture(GL_TEXTURE_2D, texId[7]);  // Making the texture identifier current (or bring it to the deck)
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glTexImage2D
+    (GL_TEXTURE_2D,
+        0,
+        GL_RGBA,
+        png[7].wid,
+        png[7].hei,
+        0,
+        GL_RGBA,
+        GL_UNSIGNED_BYTE,
+        png[7].rgba);
     int level = menu.Background();
 
     if (level == 1)
@@ -1635,7 +1755,7 @@ void Player::Initialize() {
 
 void Player::Draw()
 {
-    glColor3ub(0, 0, 255);
+    /*glColor3ub(0, 0, 255);
     glBegin(GL_QUADS);
 
     glVertex2i(x - 5, y);
@@ -1648,7 +1768,27 @@ void Player::Draw()
     glVertex2i(x + 9, y - 5);
     glVertex2i(x + 9, y + 4);
 
+    glEnd();*/
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, texId[1]);
+
+    glBegin(GL_QUADS);
+
+    glTexCoord2d(0.0, 0.0);
+    glVertex2i(x - 20, y - 14);
+
+    glTexCoord2d(1.0, 0.0);
+    glVertex2i(x + 20, y - 14);
+
+    glTexCoord2d(1.0, 1.0);
+    glVertex2i(x + 20, y + 14);
+
+    glTexCoord2d(0.0, 1.0);
+    glVertex2i(x - 20, y + 14);
+
     glEnd();
+
+    glDisable(GL_TEXTURE_2D);
 }
 
 void Player::Shoot()
