@@ -1110,6 +1110,9 @@ int main() {
     FsOpenWindow(16, 16, 600, 800, 1);
 
     FsChangeToProgramDir();
+    YsRawPngDecoder tutorial;
+    tutorial.Decode("tutorial.png");
+    tutorial.Flip();
 
     png[0].Decode("map.png");
     png[1].Decode("ep.png");
@@ -1275,6 +1278,16 @@ int main() {
 
     if (level == 1)
     {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        if (0 < 600 && 0 < 800)
+        {
+            glRasterPos2d(0, 799);
+            glDrawPixels(tutorial.wid, tutorial.hei, GL_RGBA, GL_UNSIGNED_BYTE, tutorial.rgba);
+            FsSwapBuffers();
+
+            FsSleep(1500);
+        }
         while (terminate == 0)
 
         {
