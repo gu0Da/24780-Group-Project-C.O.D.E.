@@ -178,6 +178,8 @@ void InGameMenu::AddText(int level, int score, int health, char* weapon)
 
 void InGameMenu::Display(int level, int score, int health, char* weapon)
 {
+    GLuint texId[6];
+    
     //char pattern[] =
     //{
     //	"..11...11.."
@@ -224,11 +226,83 @@ void InGameMenu::Display(int level, int score, int health, char* weapon)
     if (level == 0)
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glColor3f(0.0, 0, 0);
-        glRasterPos2d(200, 350);
-        YsGlDrawFontBitmap20x32("You Lose!");
-        glRasterPos2d(180, 420);
-        YsGlDrawFontBitmap20x32("Play Again?");
+        YsRawPngDecoder map;
+        map.Decode("map.png");
+        glGenTextures(1, &texId[0]);  // Reserve one texture identifier
+        glBindTexture(GL_TEXTURE_2D, texId[0]);  // Making the texture identifier current (or bring it to the deck)
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        glTexImage2D
+        (GL_TEXTURE_2D,
+            0,    // Level of detail
+            GL_RGBA,
+            map.wid,
+            map.hei,
+            0,    // Border width, but not supported and needs to be 0.
+            GL_RGBA,
+            GL_UNSIGNED_BYTE,
+            map.rgba);
+        
+        for (;;)
+        {
+            FsPollDevice();
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+            glColor4d(1.0, 1.0, 1.0, 2.0);
+            //Transparent
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+            glEnable(GL_TEXTURE_2D);  // Begin using texture mapping
+            //Draw Background
+            //glBindTexture(GL_TEXTURE_2D, texId[0]);
+
+            glBegin(GL_QUADS);
+
+            glTexCoord2d(0.0, 0.0);
+            glVertex2i(0, 0);
+
+            glTexCoord2d(1.0, 0.0);
+            glVertex2i(600, 0);
+
+            glTexCoord2d(1.0, 1.0);
+            glVertex2i(600, 800);
+
+            glTexCoord2d(0.0, 1.0);
+            glVertex2i(0, 800);
+
+            glEnd();
+
+            glDisable(GL_TEXTURE_2D);  // End using texture mapping
+            /*auto key = FsInkey();
+            if (FSKEY_ESC == key)
+            {
+                break;
+            }
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            if (0 < 600 && 0 < 800)
+            {
+                glRasterPos2d(0, 799);
+                glDrawPixels(map.wid, map.hei, GL_RGBA, GL_UNSIGNED_BYTE, map.rgba);
+            }*/
+
+            glColor3f(1.0, 1, 0);
+            glRasterPos2d(200, 350);
+            YsGlDrawFontBitmap20x32("You Lose!");
+            glRasterPos2d(180, 420);
+            YsGlDrawFontBitmap20x32("Play Again?");
+            FsSwapBuffers();
+
+            FsSleep(10);
+        }
+        
     }
     if (health >= 1)
     {
