@@ -1378,6 +1378,7 @@ int main() {
                 {
                     if(shield[i].state==1 && shield[i].Collide(player)==1&&!player.spawning)
                     {
+                        //sound-powerup shield
                         shield[i].state=0;
                         shield[i].d=1;
                         powercount--;
@@ -1400,6 +1401,7 @@ int main() {
                           obstacle[i].state=1;
                         else
                         {
+                          //sound-obstacle collision
                           obstacle[i].state=0;
                           obsscreen--;
                         }
@@ -1412,6 +1414,7 @@ int main() {
                 {
                     if (life[i].state == 1 && life[i].Collide(player) == 1&&!player.spawning)
                     {
+                        //sound-acquire life powerup
                         life[i].state = 0;
                         if(playerLives>=4)
                             playerLives=4;
@@ -1428,6 +1431,7 @@ int main() {
                 {
                     if (coins[i].state == 1 && coins[i].Collide(player) == 1&&!player.spawning)
                     {
+                        //sound-collected coins
                         coins[i].state = 0;
                         score+=10;
                         coinscreen--;
@@ -1438,6 +1442,7 @@ int main() {
                 {
                     if (weapons[i].state == 1 && weapons[i].Collide(player) == 1&&!player.spawning)
                     {
+                        //sound-change weapon
                         weapons[i].state = 0;
                         if(weapons[i].type==1)
                             player.ChangeMissile("Standard");
