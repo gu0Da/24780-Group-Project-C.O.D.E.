@@ -44,7 +44,6 @@ int CheckCollision(
     relativeY = pY - objY;
     if (-9 - objsizeX <= relativeX && relativeX <= objsizeX + 9 && -4 <= relativeY && relativeY < objsizeY + 19)
     {
-        printf("Collided \n");
         return 1;
     }
     else
