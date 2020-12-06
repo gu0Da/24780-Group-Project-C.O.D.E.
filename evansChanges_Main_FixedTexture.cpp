@@ -24,7 +24,7 @@ Simulate hit: H
 
 const int nMissiles = 100;
 
-int playerLives=3;
+int playerLives = 3;
 
 using namespace std;
 YsRawPngDecoder png[6];
@@ -141,140 +141,140 @@ public:
 class MissileStandard
 {
 public:
-	int x,y,state;
-	int yStart;
-	int distanceTraveled=0;
-	bool IsFlying(void);
-	void Initialize(void);
-	//bool CheckCollision(Target t);
-	bool GoneOutOfWindow(void);
-	bool TryShoot(int x0,int y0, int index);
-	void Move(void);
-	void Draw(void);
+    int x, y, state;
+    int yStart;
+    int distanceTraveled = 0;
+    bool IsFlying(void);
+    void Initialize(void);
+    //bool CheckCollision(Target t);
+    bool GoneOutOfWindow(void);
+    bool TryShoot(int x0, int y0, int index);
+    void Move(void);
+    void Draw(void);
 };
 
 MissileStandard missileStandard[nMissiles];
-int shootWait=10;//Change
+int shootWait = 10;//Change
 
 bool MissileStandard::IsFlying(void)
 {
-	return 0!=state;
+    return 0 != state;
 }
 void MissileStandard::Initialize(void)
 {
-	state=0;
+    state = 0;
 }
 /*bool MissileStandard::CheckCollision(Target t)
 {
-	return ::CheckCollision(x,y,t.x,t.y,t.w,t.h);
+    return ::CheckCollision(x,y,t.x,t.y,t.w,t.h);
 }*/
 bool MissileStandard::GoneOutOfWindow(void)
 {
-	return y<0;
+    return y < 0;
 }
 void MissileStandard::Move(void)
 {
-	if(0!=state)
-	{
-		y-=10;
-		distanceTraveled=distanceTraveled+10;
-		if(true==GoneOutOfWindow())
-		{
-			state=0;
-			distanceTraveled=0;
-		}
-	}
+    if (0 != state)
+    {
+        y -= 10;
+        distanceTraveled = distanceTraveled + 10;
+        if (true == GoneOutOfWindow())
+        {
+            state = 0;
+            distanceTraveled = 0;
+        }
+    }
 }
-bool MissileStandard::TryShoot(int x0,int y0, int index)//Change
+bool MissileStandard::TryShoot(int x0, int y0, int index)//Change
 {
 
-	if(0==state && shootWait>100)
-	{
-			state=1;
-			x=x0;
-			y=y0;
-			shootWait=0;
-			return true;
+    if (0 == state && shootWait > 100)
+    {
+        state = 1;
+        x = x0;
+        y = y0;
+        shootWait = 0;
+        return true;
 
 
-	}
-	shootWait++;
-	return false;
+    }
+    shootWait++;
+    return false;
 }
 void MissileStandard::Draw(void)
 {
-	glColor3ub(255,0,0);
-	glBegin(GL_QUADS);
-	glVertex2i(x-2,y);
-	glVertex2i(x+2,y);
-	glVertex2i(x+2,y+9);
-	glVertex2i(x-2,y+9);
-	glEnd();
+    glColor3ub(255, 0, 0);
+    glBegin(GL_QUADS);
+    glVertex2i(x - 2, y);
+    glVertex2i(x + 2, y);
+    glVertex2i(x + 2, y + 9);
+    glVertex2i(x - 2, y + 9);
+    glEnd();
 }
 
 //Just for demo: This class is just a second sample missile class
 class MissileRapid
 {
 public:
-	int x,y,state;
-	bool IsFlying(void);
-	void Initialize(void);
-	//bool CheckCollision(Target t);
-	bool GoneOutOfWindow(void);
-	bool TryShoot(int x0,int y0);
-	void Move(void);
-	void Draw(void);
+    int x, y, state;
+    bool IsFlying(void);
+    void Initialize(void);
+    //bool CheckCollision(Target t);
+    bool GoneOutOfWindow(void);
+    bool TryShoot(int x0, int y0);
+    void Move(void);
+    void Draw(void);
 };
 
 MissileRapid missileRapid[nMissiles];
 
 bool MissileRapid::IsFlying(void)
 {
-	return 0!=state;
+    return 0 != state;
 }
 void MissileRapid::Initialize(void)
 {
-	state=0;
+    state = 0;
 }
 /*bool MissileRapid::CheckCollision(Target t)
 {
-	return ::CheckCollision(x,y,t.x,t.y,t.w,t.h);
+    return ::CheckCollision(x,y,t.x,t.y,t.w,t.h);
 }*/
 bool MissileRapid::GoneOutOfWindow(void)
 {
-	return y<0;
+    return y < 0;
 }
 void MissileRapid::Move(void)
 {
-	if(0!=state)
-	{
-		y-=10;
-		if(true==GoneOutOfWindow())
-		{
-			state=0;
-		}
-	}
+    if (0 != state)
+    {
+        y -= 10;
+        if (true == GoneOutOfWindow())
+        {
+            state = 0;
+        }
+    }
 }
-bool MissileRapid::TryShoot(int x0,int y0)
+bool MissileRapid::TryShoot(int x0, int y0)
 {
-	if(0==state)
-	{
-		state=1;
-		x=x0;
-		y=y0;
-		return true;
-	}
-	return false;
+    if (0 == state)
+    {
+        state = 1;
+        x = x0;
+        y = y0;
+        return true;
+    }
+    return false;
 }
 void MissileRapid::Draw(void)
 {
-	glColor3ub(0,255,255);
-	glBegin(GL_QUADS);
-	glVertex2i(x-2,y);
-	glVertex2i(x+2,y);
-	glVertex2i(x+2,y+9);
-	glVertex2i(x-2,y+9);
-	glEnd();
+    glColor3ub(0, 255, 255);
+    glBegin(GL_QUADS);
+    glVertex2i(x - 2, y);
+    glVertex2i(x + 2, y);
+    glVertex2i(x + 2, y + 9);
+    glVertex2i(x - 2, y + 9);
+    glEnd();
 }
 
 //SpreadM
@@ -283,197 +283,197 @@ void MissileRapid::Draw(void)
 class MissileSpreadM
 {
 public:
-	int x,y,state;
-	bool IsFlying(void);
-	void Initialize(void);
-	//bool CheckCollision(Target t);
-	bool GoneOutOfWindow(void);
-	bool TryShoot(int x0,int y0);
-	void Move(void);
-	void Draw(void);
+    int x, y, state;
+    bool IsFlying(void);
+    void Initialize(void);
+    //bool CheckCollision(Target t);
+    bool GoneOutOfWindow(void);
+    bool TryShoot(int x0, int y0);
+    void Move(void);
+    void Draw(void);
 };
 
 MissileSpreadM missileSpreadM[nMissiles];
 
 bool MissileSpreadM::IsFlying(void)
 {
-	return 0!=state;
+    return 0 != state;
 }
 void MissileSpreadM::Initialize(void)
 {
-	state=0;
+    state = 0;
 }
 /*bool MissileSpreadM::CheckCollision(Target t)
 {
-	return ::CheckCollision(x,y,t.x,t.y,t.w,t.h);
+    return ::CheckCollision(x,y,t.x,t.y,t.w,t.h);
 }*/
 bool MissileSpreadM::GoneOutOfWindow(void)
 {
-	return y<0;
+    return y < 0;
 }
 void MissileSpreadM::Move(void)
 {
-	if(0!=state)
-	{
-		y-=10;
-		if(true==GoneOutOfWindow())
-		{
-			state=0;
-		}
-	}
+    if (0 != state)
+    {
+        y -= 10;
+        if (true == GoneOutOfWindow())
+        {
+            state = 0;
+        }
+    }
 }
-bool MissileSpreadM::TryShoot(int x0,int y0)
+bool MissileSpreadM::TryShoot(int x0, int y0)
 {
-	if(0==state)
-	{
-		state=1;
-		x=x0;
-		y=y0;
-		return true;
-	}
-	return false;
+    if (0 == state)
+    {
+        state = 1;
+        x = x0;
+        y = y0;
+        return true;
+    }
+    return false;
 }
 void MissileSpreadM::Draw(void)
 {
-	glColor3ub(0,255,0);
-	glBegin(GL_QUADS);
-	glVertex2i(x-2,y);
-	glVertex2i(x+2,y);
-	glVertex2i(x+2,y+9);
-	glVertex2i(x-2,y+9);
-	glEnd();
+    glColor3ub(0, 255, 0);
+    glBegin(GL_QUADS);
+    glVertex2i(x - 2, y);
+    glVertex2i(x + 2, y);
+    glVertex2i(x + 2, y + 9);
+    glVertex2i(x - 2, y + 9);
+    glEnd();
 }
 
 ///Left
 class MissileSpreadL
 {
 public:
-	int x,y,state;
-	bool IsFlying(void);
-	void Initialize(void);
-	//bool CheckCollision(Target t);
-	bool GoneOutOfWindow(void);
-	bool TryShoot(int x0,int y0);
-	void Move(void);
-	void Draw(void);
+    int x, y, state;
+    bool IsFlying(void);
+    void Initialize(void);
+    //bool CheckCollision(Target t);
+    bool GoneOutOfWindow(void);
+    bool TryShoot(int x0, int y0);
+    void Move(void);
+    void Draw(void);
 };
 
 MissileSpreadL missileSpreadL[nMissiles];
 
 bool MissileSpreadL::IsFlying(void)
 {
-	return 0!=state;
+    return 0 != state;
 }
 void MissileSpreadL::Initialize(void)
 {
-	state=0;
+    state = 0;
 }
 /*bool MissileSpreadL::CheckCollision(Target t)
 {
-	return ::CheckCollision(x,y,t.x,t.y,t.w,t.h);
+    return ::CheckCollision(x,y,t.x,t.y,t.w,t.h);
 }*/
 bool MissileSpreadL::GoneOutOfWindow(void)
 {
-	return y<0;
+    return y < 0;
 }
 void MissileSpreadL::Move(void)
 {
-	if(0!=state)
-	{
-		y-=10;
-		x-=1;
-		if(true==GoneOutOfWindow())
-		{
-			state=0;
-		}
-	}
+    if (0 != state)
+    {
+        y -= 10;
+        x -= 1;
+        if (true == GoneOutOfWindow())
+        {
+            state = 0;
+        }
+    }
 }
-bool MissileSpreadL::TryShoot(int x0,int y0)
+bool MissileSpreadL::TryShoot(int x0, int y0)
 {
-	if(0==state)
-	{
-		state=1;
-		x=x0;
-		y=y0;
-		return true;
-	}
-	return false;
+    if (0 == state)
+    {
+        state = 1;
+        x = x0;
+        y = y0;
+        return true;
+    }
+    return false;
 }
 void MissileSpreadL::Draw(void)
 {
-	glColor3ub(0,255,0);
-	glBegin(GL_QUADS);
-	glVertex2i(x-2,y);
-	glVertex2i(x+2,y);
-	glVertex2i(x+2,y+9);
-	glVertex2i(x-2,y+9);
-	glEnd();
+    glColor3ub(0, 255, 0);
+    glBegin(GL_QUADS);
+    glVertex2i(x - 2, y);
+    glVertex2i(x + 2, y);
+    glVertex2i(x + 2, y + 9);
+    glVertex2i(x - 2, y + 9);
+    glEnd();
 }
 
 //Right Spread
 class MissileSpreadR
 {
 public:
-	int x,y,state;
-	bool IsFlying(void);
-	void Initialize(void);
-	//bool CheckCollision(Target t);
-	bool GoneOutOfWindow(void);
-	bool TryShoot(int x0,int y0);
-	void Move(void);
-	void Draw(void);
+    int x, y, state;
+    bool IsFlying(void);
+    void Initialize(void);
+    //bool CheckCollision(Target t);
+    bool GoneOutOfWindow(void);
+    bool TryShoot(int x0, int y0);
+    void Move(void);
+    void Draw(void);
 };
 
 MissileSpreadR missileSpreadR[nMissiles];
 
 bool MissileSpreadR::IsFlying(void)
 {
-	return 0!=state;
+    return 0 != state;
 }
 void MissileSpreadR::Initialize(void)
 {
-	state=0;
+    state = 0;
 }
 /*bool MissileSpreadR::CheckCollision(Target t)
 {
-	return ::CheckCollision(x,y,t.x,t.y,t.w,t.h);
+    return ::CheckCollision(x,y,t.x,t.y,t.w,t.h);
 }*/
 bool MissileSpreadR::GoneOutOfWindow(void)
 {
-	return y<0;
+    return y < 0;
 }
 void MissileSpreadR::Move(void)
 {
-	if(0!=state)
-	{
-		y-=10;
-		x+=1;
-		if(true==GoneOutOfWindow())
-		{
-			state=0;
-		}
-	}
+    if (0 != state)
+    {
+        y -= 10;
+        x += 1;
+        if (true == GoneOutOfWindow())
+        {
+            state = 0;
+        }
+    }
 }
-bool MissileSpreadR::TryShoot(int x0,int y0)
+bool MissileSpreadR::TryShoot(int x0, int y0)
 {
-	if(0==state)
-	{
-		state=1;
-		x=x0;
-		y=y0;
-		return true;
-	}
-	return false;
+    if (0 == state)
+    {
+        state = 1;
+        x = x0;
+        y = y0;
+        return true;
+    }
+    return false;
 }
 void MissileSpreadR::Draw(void)
 {
-	glColor3ub(0,255,0);
-	glBegin(GL_QUADS);
-	glVertex2i(x-2,y);
-	glVertex2i(x+2,y);
-	glVertex2i(x+2,y+9);
-	glVertex2i(x-2,y+9);
-	glEnd();
+    glColor3ub(0, 255, 0);
+    glBegin(GL_QUADS);
+    glVertex2i(x - 2, y);
+    glVertex2i(x + 2, y);
+    glVertex2i(x + 2, y + 9);
+    glVertex2i(x - 2, y + 9);
+    glEnd();
 }
 
 
@@ -953,7 +953,7 @@ int main() {
     srand(time(NULL));
     const int nEnemy = 4;
 
-    int level = 1;
+    
     int score = 3;
     //int health = 5;
 
@@ -1103,14 +1103,13 @@ int main() {
         GL_UNSIGNED_BYTE,
         png[5].rgba);
 
-    level = menu.Background();
+    int level = menu.Background();
     while (level != 3) {
         if (level == 1)
         {
             while (terminate == 0)
 
             {
-
                 FsPollDevice();
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
@@ -1145,31 +1144,31 @@ int main() {
 
                 //only can control player when not spawning
                 //The controls are just for demoing okay to change
-                switch(key)
+                switch (key)
                 {
                 case FSKEY_ESC:
-                  terminate=1;
-                  break;
+                    terminate = 1;
+                    break;
                 case FSKEY_SPACE:
-                  player.Shoot();
-              		break;
+                    player.Shoot();
+                    break;
                 case FSKEY_S://switch missile type
-                  player.ChangeMissile("Standard");
-                  break;
+                    player.ChangeMissile("Standard");
+                    break;
                 case FSKEY_B://Switch missile type
-                  player.ChangeMissile("Rapid");
-                  break;
-          			case FSKEY_P://Switch missile type
-          				player.ChangeMissile("Spread");
-          				break;
+                    player.ChangeMissile("Rapid");
+                    break;
+                case FSKEY_P://Switch missile type
+                    player.ChangeMissile("Spread");
+                    break;
                 case FSKEY_H://Simulate a hit
-                  player.health=player.health-1;
-                  break;
+                    player.health = player.health - 1;
+                    break;
                 }
-          			if (0 != FsGetKeyState(FSKEY_SPACE) && player.missileType=="Rapid")///Change
-          			{
-          				player.Shoot();
-          			}
+                if (0 != FsGetKeyState(FSKEY_SPACE) && player.missileType == "Rapid")///Change
+                {
+                    player.Shoot();
+                }
                 if (0 != FsGetKeyState(FSKEY_LEFT))
                 {
                     player.x -= 10;
@@ -1217,7 +1216,7 @@ int main() {
                     shield[i].Draw();
 
                 //Health bar for demoing
-                if (player.health > 0) DrawRect(40, 120, 10 * player.health, 20);
+                //if (player.health > 0) DrawRect(40, 120, 10 * player.health, 20);
 
                 //draw player always when not mid spawning or dead
                 if (player.state == 1) player.Draw();
@@ -1230,8 +1229,9 @@ int main() {
                 //If player health reaches 0 and player is not mid spawn, the player explodes
                 if (player.health <= 0 && !player.spawning) {
                     player.state = 0;
-                    playerLives--;
+                   
                     if (true == player.e.Begin(player.x, player.y)) {
+                        playerLives--;
                     }
 
                 }
@@ -1297,7 +1297,8 @@ int main() {
                 char* cstr = new char[player.missileType.length() + 1];
                 strcpy(cstr, player.missileType.c_str());
 
-                game.Display(level, score, health, cstr);
+                //printf("Live = %d",playerLives);
+                game.Display(playerLives, score, health, cstr);
                 delete[] cstr;
 
                 glFlush();
@@ -1313,67 +1314,67 @@ int main() {
 
 //Ensures all missiles are drawn.
 //Ensures all missiles are drawn.
-void DrawAllMissiles(){
+void DrawAllMissiles() {
 
-    for(auto &m : missileStandard)
+    for (auto& m : missileStandard)
     {
-      if(m.IsFlying())
-      {
-        m.Draw();
-      }
+        if (m.IsFlying())
+        {
+            m.Draw();
+        }
     }
-    for(auto &m : missileStandard)
+    for (auto& m : missileStandard)
     {
-      m.Move();
-    }
-
-    for(auto &m : missileRapid)
-    {
-      if(m.IsFlying())
-      {
-        m.Draw();
-      }
-    }
-    for(auto &m : missileRapid)
-    {
-      m.Move();
+        m.Move();
     }
 
-		for(auto &m : missileSpreadM)
-		{
-			if(m.IsFlying())
-			{
-				m.Draw();
-			}
-		}
-		for(auto &m : missileSpreadM)
-		{
-			m.Move();
-		}
+    for (auto& m : missileRapid)
+    {
+        if (m.IsFlying())
+        {
+            m.Draw();
+        }
+    }
+    for (auto& m : missileRapid)
+    {
+        m.Move();
+    }
 
-		for(auto &m : missileSpreadL)
-		{
-			if(m.IsFlying())
-			{
-				m.Draw();
-			}
-		}
-		for(auto &m : missileSpreadL)
-		{
-			m.Move();
-		}
+    for (auto& m : missileSpreadM)
+    {
+        if (m.IsFlying())
+        {
+            m.Draw();
+        }
+    }
+    for (auto& m : missileSpreadM)
+    {
+        m.Move();
+    }
 
-		for(auto &m : missileSpreadR)
-		{
-			if(m.IsFlying())
-			{
-				m.Draw();
-			}
-		}
-		for(auto &m : missileSpreadR)
-		{
-			m.Move();
-		}
+    for (auto& m : missileSpreadL)
+    {
+        if (m.IsFlying())
+        {
+            m.Draw();
+        }
+    }
+    for (auto& m : missileSpreadL)
+    {
+        m.Move();
+    }
+
+    for (auto& m : missileSpreadR)
+    {
+        if (m.IsFlying())
+        {
+            m.Draw();
+        }
+    }
+    for (auto& m : missileSpreadR)
+    {
+        m.Move();
+    }
 }
 
 void DrawRect(int blockX, int blockY, int blockSizeX, int blockSizeY)
@@ -1415,152 +1416,152 @@ void DrawCircle(int cx, int cy, int rad, int fill)
 }
 
 //PlayerFunctions
-void Player::Initialize(){
+void Player::Initialize() {
 
-  if(state==0 && spawning){
-    if(respawn){//Only start ship here when it is first respawning
-      x=300;
-      y=1000;
-      respawn=false;
+    if (state == 0 && spawning) {
+        if (respawn) {//Only start ship here when it is first respawning
+            x = 300;
+            y = 1000;
+            respawn = false;
+        }
+        if (y > 700) y = y - 10;
+        else {
+            initializeCount++;
+            if (initializeCount > 70)
+            {
+                state = 1;
+                health = 3;
+                initializeCount = 0;
+                spawning = false;
+            }
+        }
+        Draw();
     }
-    if(y>700) y=y-10;
-    else{
-      initializeCount++;
-      if(initializeCount>70)
-      {
-        state=1;
-        health=5;
-        initializeCount=0;
-        spawning=false;
-      }
-      }
-    Draw();
-  }
 
-  else return;
+    else return;
 }
 
 void Player::Draw()
 {
-	glColor3ub(0, 0, 255);
-	glBegin(GL_QUADS);
+    glColor3ub(0, 0, 255);
+    glBegin(GL_QUADS);
 
-	glVertex2i(x - 5, y);
-	glVertex2i(x - 5, y - 19);
-	glVertex2i(x + 4, y - 19);
-	glVertex2i(x + 4, y);
+    glVertex2i(x - 5, y);
+    glVertex2i(x - 5, y - 19);
+    glVertex2i(x + 4, y - 19);
+    glVertex2i(x + 4, y);
 
-	glVertex2i(x - 9, y + 4);
-	glVertex2i(x - 9, y - 5);
-	glVertex2i(x + 9, y - 5);
-	glVertex2i(x + 9, y + 4);
+    glVertex2i(x - 9, y + 4);
+    glVertex2i(x - 9, y - 5);
+    glVertex2i(x + 9, y - 5);
+    glVertex2i(x + 9, y + 4);
 
-	glEnd();
+    glEnd();
 }
 
 void Player::Shoot()
 {
-  if(missileType=="Standard"){
+    if (missileType == "Standard") {
 
-		int i=0;
-    for(auto &m : missileStandard)
-    {
-      if(true==m.TryShoot(x,y,i))
-      {
-        //player.PlayOneShot(program.missileSE);
-        //++nUsed;
-        break;
-      }
+        int i = 0;
+        for (auto& m : missileStandard)
+        {
+            if (true == m.TryShoot(x, y, i))
+            {
+                //player.PlayOneShot(program.missileSE);
+                //++nUsed;
+                break;
+            }
 
-			i++;
+            i++;
+        }
     }
-  }
 
-  if(missileType=="Rapid"){
-    for(auto &m : missileRapid)
-    {
-      if(true==m.TryShoot(x,y))
-      {
-        //player.PlayOneShot(program.missileSE);
-        //++nUsed;
-        break;
-      }
+    if (missileType == "Rapid") {
+        for (auto& m : missileRapid)
+        {
+            if (true == m.TryShoot(x, y))
+            {
+                //player.PlayOneShot(program.missileSE);
+                //++nUsed;
+                break;
+            }
+        }
     }
-  }
 
-	if(missileType=="Spread"){
+    if (missileType == "Spread") {
 
 
-		for(auto &m : missileSpreadM)
-		{
-			if(true==m.TryShoot(x,y))
-			{
-				//player.PlayOneShot(program.missileSE);
-				//++nUsed;
-				break;
-			}
+        for (auto& m : missileSpreadM)
+        {
+            if (true == m.TryShoot(x, y))
+            {
+                //player.PlayOneShot(program.missileSE);
+                //++nUsed;
+                break;
+            }
 
-		}
+        }
 
-		for(auto &m : missileSpreadL)
-		{
-			if(true==m.TryShoot(x,y))
-			{
-				//player.PlayOneShot(program.missileSE);
-				//++nUsed;
-				break;
-			}
+        for (auto& m : missileSpreadL)
+        {
+            if (true == m.TryShoot(x, y))
+            {
+                //player.PlayOneShot(program.missileSE);
+                //++nUsed;
+                break;
+            }
 
-		}
+        }
 
-		for(auto &m : missileSpreadR)
-		{
-			if(true==m.TryShoot(x,y))
-			{
-				//player.PlayOneShot(program.missileSE);
-				//++nUsed;
-				break;
-			}
+        for (auto& m : missileSpreadR)
+        {
+            if (true == m.TryShoot(x, y))
+            {
+                //player.PlayOneShot(program.missileSE);
+                //++nUsed;
+                break;
+            }
 
-		}
-	}
+        }
+    }
 
 }
 
-void Player::ChangeMissile(string newType){
+void Player::ChangeMissile(string newType) {
 
-  missileType=newType;
+    missileType = newType;
 
-  if(missileType=="Standard"){
+    if (missileType == "Standard") {
 
-    for(auto &m : missileStandard)
-    {
-        m.Initialize();
-      }
+        for (auto& m : missileStandard)
+        {
+            m.Initialize();
+        }
 
-  }
+    }
 
-  if(missileType=="Rapid"){
+    if (missileType == "Rapid") {
 
-    for(auto &m : missileRapid)
-    {
-        m.Initialize();
-      }
+        for (auto& m : missileRapid)
+        {
+            m.Initialize();
+        }
 
-  }
+    }
 
-	if(missileType=="Spread"){
+    if (missileType == "Spread") {
 
-		for(auto &m : missileSpreadM)
-		{
-				m.Initialize();
-			}
+        for (auto& m : missileSpreadM)
+        {
+            m.Initialize();
+        }
 
-		for(auto &m : missileSpreadL)
-		{
-				m.Initialize();
-			}
+        for (auto& m : missileSpreadL)
+        {
+            m.Initialize();
+        }
 
-	}
+    }
 
 }
