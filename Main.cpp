@@ -6,6 +6,7 @@ change to missile B: B
 Simulate hit: H
 */
 
+#define _CRT_SECURE_NO_WARNINGS
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,11 +22,13 @@ Simulate hit: H
 #include "InGameMenu.h"
 #include "Menu.h"
 
-const int nMissiles = 10;
+const int nMissiles = 100;
+
+int playerLives = 3;
 
 using namespace std;
-YsRawPngDecoder png[4];
-GLuint texId[4];
+YsRawPngDecoder png[6];
+GLuint texId[6];
 
 void DrawAllMissiles();
 void DrawRect(int blockX, int blockY, int blockSizeX, int blockSizeY); //used for demo health bar
@@ -139,16 +142,19 @@ class MissileStandard
 {
 public:
     int x, y, state;
+    int yStart;
+    int distanceTraveled = 0;
     bool IsFlying(void);
     void Initialize(void);
     //bool CheckCollision(Target t);
     bool GoneOutOfWindow(void);
-    bool TryShoot(int x0, int y0);
+    bool TryShoot(int x0, int y0, int index);
     void Move(void);
     void Draw(void);
 };
 
 MissileStandard missileStandard[nMissiles];
+int shootWait = 10;//Change
 
 bool MissileStandard::IsFlying(void)
 {
@@ -160,7 +166,7 @@ void MissileStandard::Initialize(void)
 }
 /*bool MissileStandard::CheckCollision(Target t)
 {
-  return ::CheckCollision(x,y,t.x,t.y,t.w,t.h);
+    return ::CheckCollision(x,y,t.x,t.y,t.w,t.h);
 }*/
 bool MissileStandard::GoneOutOfWindow(void)
 {
@@ -171,21 +177,28 @@ void MissileStandard::Move(void)
     if (0 != state)
     {
         y -= 10;
+        distanceTraveled = distanceTraveled + 10;
         if (true == GoneOutOfWindow())
         {
             state = 0;
+            distanceTraveled = 0;
         }
     }
 }
-bool MissileStandard::TryShoot(int x0, int y0)
+bool MissileStandard::TryShoot(int x0, int y0, int index)//Change
 {
-    if (0 == state)
+
+    if (0 == state && shootWait > 100)
     {
         state = 1;
         x = x0;
         y = y0;
+        shootWait = 0;
         return true;
+
+
     }
+    shootWait++;
     return false;
 }
 void MissileStandard::Draw(void)
@@ -200,6 +213,271 @@ void MissileStandard::Draw(void)
 }
 
 //Just for demo: This class is just a second sample missile class
+class MissileRapid
+{
+public:
+    int x, y, state;
+    bool IsFlying(void);
+    void Initialize(void);
+    //bool CheckCollision(Target t);
+    bool GoneOutOfWindow(void);
+    bool TryShoot(int x0, int y0);
+    void Move(void);
+    void Draw(void);
+};
+
+MissileRapid missileRapid[nMissiles];
+
+bool MissileRapid::IsFlying(void)
+{
+    return 0 != state;
+}
+void MissileRapid::Initialize(void)
+{
+    state = 0;
+}
+/*bool MissileRapid::CheckCollision(Target t)
+{
+    return ::CheckCollision(x,y,t.x,t.y,t.w,t.h);
+}*/
+bool MissileRapid::GoneOutOfWindow(void)
+{
+    return y < 0;
+}
+void MissileRapid::Move(void)
+{
+    if (0 != state)
+    {
+        y -= 10;
+        if (true == GoneOutOfWindow())
+        {
+            state = 0;
+        }
+    }
+}
+bool MissileRapid::TryShoot(int x0, int y0)
+{
+    if (0 == state)
+    {
+        state = 1;
+        x = x0;
+        y = y0;
+        return true;
+    }
+    return false;
+}
+void MissileRapid::Draw(void)
+{
+    glColor3ub(0, 255, 255);
+    glBegin(GL_QUADS);
+    glVertex2i(x - 2, y);
+    glVertex2i(x + 2, y);
+    glVertex2i(x + 2, y + 9);
+    glVertex2i(x - 2, y + 9);
+    glEnd();
+}
+
+//SpreadM
+
+//SpreadM
+class MissileSpreadM
+{
+public:
+    int x, y, state;
+    bool IsFlying(void);
+    void Initialize(void);
+    //bool CheckCollision(Target t);
+    bool GoneOutOfWindow(void);
+    bool TryShoot(int x0, int y0);
+    void Move(void);
+    void Draw(void);
+};
+
+MissileSpreadM missileSpreadM[nMissiles];
+
+bool MissileSpreadM::IsFlying(void)
+{
+    return 0 != state;
+}
+void MissileSpreadM::Initialize(void)
+{
+    state = 0;
+}
+/*bool MissileSpreadM::CheckCollision(Target t)
+{
+    return ::CheckCollision(x,y,t.x,t.y,t.w,t.h);
+}*/
+bool MissileSpreadM::GoneOutOfWindow(void)
+{
+    return y < 0;
+}
+void MissileSpreadM::Move(void)
+{
+    if (0 != state)
+    {
+        y -= 10;
+        if (true == GoneOutOfWindow())
+        {
+            state = 0;
+        }
+    }
+}
+bool MissileSpreadM::TryShoot(int x0, int y0)
+{
+    if (0 == state)
+    {
+        state = 1;
+        x = x0;
+        y = y0;
+        return true;
+    }
+    return false;
+}
+void MissileSpreadM::Draw(void)
+{
+    glColor3ub(0, 255, 0);
+    glBegin(GL_QUADS);
+    glVertex2i(x - 2, y);
+    glVertex2i(x + 2, y);
+    glVertex2i(x + 2, y + 9);
+    glVertex2i(x - 2, y + 9);
+    glEnd();
+}
+
+///Left
+class MissileSpreadL
+{
+public:
+    int x, y, state;
+    bool IsFlying(void);
+    void Initialize(void);
+    //bool CheckCollision(Target t);
+    bool GoneOutOfWindow(void);
+    bool TryShoot(int x0, int y0);
+    void Move(void);
+    void Draw(void);
+};
+
+MissileSpreadL missileSpreadL[nMissiles];
+
+bool MissileSpreadL::IsFlying(void)
+{
+    return 0 != state;
+}
+void MissileSpreadL::Initialize(void)
+{
+    state = 0;
+}
+/*bool MissileSpreadL::CheckCollision(Target t)
+{
+    return ::CheckCollision(x,y,t.x,t.y,t.w,t.h);
+}*/
+bool MissileSpreadL::GoneOutOfWindow(void)
+{
+    return y < 0;
+}
+void MissileSpreadL::Move(void)
+{
+    if (0 != state)
+    {
+        y -= 10;
+        x -= 1;
+        if (true == GoneOutOfWindow())
+        {
+            state = 0;
+        }
+    }
+}
+bool MissileSpreadL::TryShoot(int x0, int y0)
+{
+    if (0 == state)
+    {
+        state = 1;
+        x = x0;
+        y = y0;
+        return true;
+    }
+    return false;
+}
+void MissileSpreadL::Draw(void)
+{
+    glColor3ub(0, 255, 0);
+    glBegin(GL_QUADS);
+    glVertex2i(x - 2, y);
+    glVertex2i(x + 2, y);
+    glVertex2i(x + 2, y + 9);
+    glVertex2i(x - 2, y + 9);
+    glEnd();
+}
+
+//Right Spread
+class MissileSpreadR
+{
+public:
+    int x, y, state;
+    bool IsFlying(void);
+    void Initialize(void);
+    //bool CheckCollision(Target t);
+    bool GoneOutOfWindow(void);
+    bool TryShoot(int x0, int y0);
+    void Move(void);
+    void Draw(void);
+};
+
+MissileSpreadR missileSpreadR[nMissiles];
+
+bool MissileSpreadR::IsFlying(void)
+{
+    return 0 != state;
+}
+void MissileSpreadR::Initialize(void)
+{
+    state = 0;
+}
+/*bool MissileSpreadR::CheckCollision(Target t)
+{
+    return ::CheckCollision(x,y,t.x,t.y,t.w,t.h);
+}*/
+bool MissileSpreadR::GoneOutOfWindow(void)
+{
+    return y < 0;
+}
+void MissileSpreadR::Move(void)
+{
+    if (0 != state)
+    {
+        y -= 10;
+        x += 1;
+        if (true == GoneOutOfWindow())
+        {
+            state = 0;
+        }
+    }
+}
+bool MissileSpreadR::TryShoot(int x0, int y0)
+{
+    if (0 == state)
+    {
+        state = 1;
+        x = x0;
+        y = y0;
+        return true;
+    }
+    return false;
+}
+void MissileSpreadR::Draw(void)
+{
+    glColor3ub(0, 255, 0);
+    glBegin(GL_QUADS);
+    glVertex2i(x - 2, y);
+    glVertex2i(x + 2, y);
+    glVertex2i(x + 2, y + 9);
+    glVertex2i(x - 2, y + 9);
+    glEnd();
+}
+
+
+//We no longer need this one, just kept it so the rest of code would compile while eveyrone is making changes
 class MissileB
 {
 public:
@@ -255,7 +533,7 @@ bool MissileB::TryShoot(int x0, int y0)
 }
 void MissileB::Draw(void)
 {
-    glColor3ub(0, 0, 0);
+    /*glColor3ub(0, 0, 0);*/
     glBegin(GL_QUADS);
     glVertex2i(x - 2, y);
     glVertex2i(x + 2, y);
@@ -263,6 +541,8 @@ void MissileB::Draw(void)
     glVertex2i(x - 2, y + 9);
     glEnd();
 }
+
+
 
 
 
@@ -436,7 +716,7 @@ void standardEnemy::Draw()
 {
     for (auto& m : missilesFired) {
         if (m.state == 1) {
-            glColor3ub(0, 0, 0);
+            /*glColor3ub(0, 0, 0);*/
             glBegin(GL_QUADS);
             glVertex2i(m.x, m.y);
             glVertex2i(m.x + m.xSize, m.y);
@@ -454,16 +734,16 @@ void standardEnemy::Draw()
         glBegin(GL_QUADS);
 
         glTexCoord2d(0.0, 0.0);
-        glVertex2i(x - 20, y - 20);
+        glVertex2i(x - 27, y - 38);
 
         glTexCoord2d(1.0, 0.0);
-        glVertex2i(x + 20, y - 20);
+        glVertex2i(x + 27, y - 38);
 
         glTexCoord2d(1.0, 1.0);
-        glVertex2i(x + 20, y + 20);
+        glVertex2i(x + 27, y + 38);
 
         glTexCoord2d(0.0, 1.0);
-        glVertex2i(x - 20, y + 20);
+        glVertex2i(x - 27, y + 38);
 
         glEnd();
 
@@ -571,13 +851,34 @@ void Life::Draw()
 {
     if (state != 0)
     {
-        glColor3ub(255, 192, 203);
+        //glColor3ub(255, 192, 203);
+        //glBegin(GL_QUADS);
+        //glVertex2i(x - 10, y);
+        //glVertex2i(x + 10, y);
+        //glVertex2i(x + 10, y + 20);
+        //glVertex2i(x - 10, y + 20);
+        //glEnd();
+
+        //Draw health power-up
+        glEnable(GL_TEXTURE_2D);  // Begin using texture mapping
+        glBindTexture(GL_TEXTURE_2D, texId[5]);
+
         glBegin(GL_QUADS);
-        glVertex2i(x - 10, y);
-        glVertex2i(x + 10, y);
-        glVertex2i(x + 10, y + 20);
-        glVertex2i(x - 10, y + 20);
+
+        glTexCoord2d(0.0, 0.0);
+        glVertex2i(x - 15, y - 15);
+
+        glTexCoord2d(1.0, 0.0);
+        glVertex2i(x + 15, y - 15);
+
+        glTexCoord2d(1.0, 1.0);
+        glVertex2i(x + 15, y + 15);
+
+        glTexCoord2d(0.0, 1.0);
+        glVertex2i(x - 15, y + 15);
+
         glEnd();
+        glDisable(GL_TEXTURE_2D);
     }
 
 }
@@ -610,13 +911,33 @@ void Shield::Draw()
 {
     if (state != 0)
     {
-        glColor3ub(0, 0, 128);
+        /*glColor3ub(0, 0, 128);
         glBegin(GL_QUADS);
         glVertex2i(x - 10, y);
         glVertex2i(x + 10, y);
         glVertex2i(x + 10, y + 20);
         glVertex2i(x - 10, y + 20);
+        glEnd();*/
+        //Draw shield power-up
+        glEnable(GL_TEXTURE_2D);  // Begin using texture mapping
+        glBindTexture(GL_TEXTURE_2D, texId[4]);
+
+        glBegin(GL_QUADS);
+
+        glTexCoord2d(0.0, 0.0);
+        glVertex2i(x - 15, y - 15);
+
+        glTexCoord2d(1.0, 0.0);
+        glVertex2i(x + 15, y - 15);
+
+        glTexCoord2d(1.0, 1.0);
+        glVertex2i(x + 15, y + 15);
+
+        glTexCoord2d(0.0, 1.0);
+        glVertex2i(x - 15, y + 15);
+
         glEnd();
+        glDisable(GL_TEXTURE_2D);
     }
 
 }
@@ -632,7 +953,7 @@ int main() {
     srand(time(NULL));
     const int nEnemy = 4;
 
-    int level = 1;
+    
     int score = 3;
     //int health = 5;
 
@@ -666,6 +987,8 @@ int main() {
     png[1].Decode("ep.png");
     png[2].Decode("boss.png");
     png[3].Decode("asteroid.png");
+    png[4].Decode("shield.png");
+    png[5].Decode("health.png");
     glGenTextures(1, &texId[0]);  // Reserve one texture identifier
     glBindTexture(GL_TEXTURE_2D, texId[0]);  // Making the texture identifier current (or bring it to the deck)
 
@@ -741,203 +1064,277 @@ int main() {
         GL_RGBA,
         GL_UNSIGNED_BYTE,
         png[3].rgba);
-    level = menu.Background();
-    while (level != 3) {
-        if (level == 1)
+
+    glGenTextures(1, &texId[4]);  // Reserve one texture identifier
+    glBindTexture(GL_TEXTURE_2D, texId[4]);  // Making the texture identifier current (or bring it to the deck)
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glTexImage2D
+    (GL_TEXTURE_2D,
+        0,
+        GL_RGBA,
+        png[4].wid,
+        png[4].hei,
+        0,
+        GL_RGBA,
+        GL_UNSIGNED_BYTE,
+        png[4].rgba);
+
+    glGenTextures(1, &texId[5]);  // Reserve one texture identifier
+    glBindTexture(GL_TEXTURE_2D, texId[5]);  // Making the texture identifier current (or bring it to the deck)
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glTexImage2D
+    (GL_TEXTURE_2D,
+        0,
+        GL_RGBA,
+        png[5].wid,
+        png[5].hei,
+        0,
+        GL_RGBA,
+        GL_UNSIGNED_BYTE,
+        png[5].rgba);
+
+    int level = menu.Background();
+    
+    
+    if (level == 1)
+    {
+        while (terminate == 0)
         {
-            while (terminate == 0)
+            FsPollDevice();
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+            glColor4d(1.0, 1.0, 1.0, 2.0);
+            //Transparent
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+            glEnable(GL_TEXTURE_2D);  // Begin using texture mapping
+            //Draw Background
+            glBindTexture(GL_TEXTURE_2D, texId[0]);
+
+            glBegin(GL_QUADS);
+
+            glTexCoord2d(0.0, 0.0);
+            glVertex2i(0, 0);
+
+            glTexCoord2d(1.0, 0.0);
+            glVertex2i(600, 0);
+
+            glTexCoord2d(1.0, 1.0);
+            glVertex2i(600, 800);
+
+            glTexCoord2d(0.0, 1.0);
+            glVertex2i(0, 800);
+
+            glEnd();
+
+            glDisable(GL_TEXTURE_2D);  // End using texture mapping
+
+            int key = FsInkey();
+
+            //only can control player when not spawning
+            //The controls are just for demoing okay to change
+            switch (key)
             {
-
-                FsPollDevice();
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-                glColor4d(1.0, 1.0, 1.0, 1.0);
-
-                glEnable(GL_TEXTURE_2D);  // Begin using texture mapping
-                //Draw Background
-                glBindTexture(GL_TEXTURE_2D, texId[0]);
-
-                glBegin(GL_QUADS);
-
-                glTexCoord2d(0.0, 0.0);
-                glVertex2i(0, 0);
-
-                glTexCoord2d(1.0, 0.0);
-                glVertex2i(600, 0);
-
-                glTexCoord2d(1.0, 1.0);
-                glVertex2i(600, 800);
-
-                glTexCoord2d(0.0, 1.0);
-                glVertex2i(0, 800);
-
-                glEnd();
-
-                glDisable(GL_TEXTURE_2D);  // End using texture mapping
-
-                int key = FsInkey();
-
-                //only can control player when not spawning
-                //The controls are just for demoing okay to change
-                switch (key)
+            case FSKEY_ESC:
+                terminate = 1;
+                break;
+            case FSKEY_SPACE:
+                player.Shoot();
+                break;
+            case FSKEY_S://switch missile type
+                player.ChangeMissile("Standard");
+                break;
+            case FSKEY_B://Switch missile type
+                player.ChangeMissile("Rapid");
+                break;
+            case FSKEY_P://Switch missile type
+                player.ChangeMissile("Spread");
+                break;
+            case FSKEY_H://Simulate a hit
+                player.health = player.health - 1;
+                break;
+            }
+            if (0 != FsGetKeyState(FSKEY_SPACE) && player.missileType == "Rapid")///Change
+            {
+                player.Shoot();
+            }
+            if (0 != FsGetKeyState(FSKEY_LEFT))
+            {
+                player.x -= 10;
+                if (player.x <= 0)
                 {
-                case FSKEY_ESC:
-                    terminate = 1;
-                    break;
-                case FSKEY_SPACE:
-                    player.Shoot();
-                    break;
-                case FSKEY_S://switch missile type
-                    player.ChangeMissile("Standard");
-                    break;
-                case FSKEY_B://Switch missile type
-                    player.ChangeMissile("B");
-                    break;
-                case FSKEY_H://Simulate a hit
-                    player.health = player.health - 1;
-                    break;
+                    player.x = 0;
                 }
-                if (0 != FsGetKeyState(FSKEY_LEFT))
+            }
+            if (0 != FsGetKeyState(FSKEY_RIGHT))
+            {
+                player.x += 10;
+                if (player.x >= 600)
                 {
-                    player.x -= 10;
-                    if (player.x <= 0)
-                    {
-                        player.x = 0;
-                    }
+                    player.x = 600;
                 }
-                if (0 != FsGetKeyState(FSKEY_RIGHT))
+            }
+            if (0 != FsGetKeyState(FSKEY_UP))
+            {
+                player.y -= 10;
+                if (player.y <= 0)
                 {
-                    player.x += 10;
-                    if (player.x >= 600)
-                    {
-                        player.x = 600;
-                    }
+                    player.y = 0;
                 }
-                if (0 != FsGetKeyState(FSKEY_UP))
+            }
+            if (0 != FsGetKeyState(FSKEY_DOWN))
+            {
+                player.y += 10;
+                if (player.y >= 800)
                 {
-                    player.y -= 10;
-                    if (player.y <= 0)
-                    {
-                        player.y = 0;
-                    }
+                    player.y = 800;
                 }
-                if (0 != FsGetKeyState(FSKEY_DOWN))
-                {
-                    player.y += 10;
-                    if (player.y >= 800)
-                    {
-                        player.y = 800;
-                    }
-                }
-
-                DrawAllMissiles(); //Ensures all missiles the are shot are drawn independent of what weapon type player is currently holding IE: will draw black missiles still in motion even if player switches to red missiles
-
-                player.Initialize(); //does nothing if player state is 1 or not spawning, else will perform respawn behavior and animation
-
-                for (int i = 0; i < nObstacle; i++)
-                    obstacle[i].Draw();
-
-                for (int i = 0; i < nLife; i++)
-                    life[i].Draw();
-
-                for (int i = 0; i < nShield; i++)
-                    shield[i].Draw();
-
-                //Health bar for demoing
-                if (player.health > 0) DrawRect(40, 120, 10 * player.health, 20);
-
-                //draw player always when not mid spawning or dead
-                if (player.state == 1) player.Draw();
-
-                //Just for demo: force field around player while spawning
-                if (player.spawning) {
-                    DrawCircle(player.x, player.y - 5, 30, 0);
-                }
-
-                //If player health reaches 0 and player is not mid spawn, the player explodes
-                if (player.health <= 0 && !player.spawning) {
-                    player.state = 0;
-                    if (true == player.e.Begin(player.x, player.y)) {
-                    }
-
-                }
-                //function calls to conitnue explosion
-                if (player.e.state == 1) {
-                    player.e.Move();
-                    player.e.Draw();
-                    //Once explosion reaches a certain point player will begin to respawn
-                    if (player.e.counter > 50) {
-                        player.respawn = true;
-                        player.spawning = true;
-                    }
-
-
-                }
-
-                for (int i = 0; i < nObstacle; i++)
-                {
-                    if (obstacle[i].state == 1 && obstacle[i].Collide(player) == 1)
-                    {
-                        printf("Hit Obstacle!\n");
-                        obstacle[i].state = 0;
-                        player.health--;
-                    }
-                }
-
-                for (int i = 0; i < nLife; i++)
-                {
-                    if (life[i].state == 1 && life[i].Collide(player) == 1)
-                    {
-                        printf("Life Added!\n");
-                        life[i].state = 0;
-                        player.health++;
-                    }
-                }
-
-                for (int i = 0; i < nShield; i++)
-                {
-                    if (shield[i].state == 1 && shield[i].Collide(player) == 1)
-                    {
-                        printf("Shield Collected!\n");
-                        shield[i].state = 0;
-                        shield[i].d = 1;
-
-                        //player.health++;
-                    }
-                }
-                for (int i = 0; i < nShield; i++)
-                {
-                    if (shield[i].d == 1)
-                    {
-                        DrawCircle(player.x, player.y - 5, 30, 0);
-                    }
-                }
-                for (auto& e : enemies)
-                {
-                    e.Move();
-                    e.Draw();
-                }
-
-                int health = player.health;
-
-                char* cstr = new char[player.missileType.length() + 1];
-                strcpy(cstr, player.missileType.c_str());
-                
-                game.Display(level, score, health, cstr);
-                delete[] cstr;
-
-                glFlush();
-                FsSwapBuffers();
-                FsSleep(25);
             }
 
-        }
-    }
+            DrawAllMissiles(); //Ensures all missiles the are shot are drawn independent of what weapon type player is currently holding IE: will draw black missiles still in motion even if player switches to red missiles
 
+            player.Initialize(); //does nothing if player state is 1 or not spawning, else will perform respawn behavior and animation
+
+            for (int i = 0; i < nObstacle; i++)
+                obstacle[i].Draw();
+
+            for (int i = 0; i < nLife; i++)
+                life[i].Draw();
+
+            for (int i = 0; i < nShield; i++)
+                shield[i].Draw();
+
+            //Health bar for demoing
+            //if (player.health > 0) DrawRect(40, 120, 10 * player.health, 20);
+
+            //draw player always when not mid spawning or dead
+            if (player.state == 1) player.Draw();
+
+            //Just for demo: force field around player while spawning
+            if (player.spawning) {
+                DrawCircle(player.x, player.y - 5, 30, 0);
+            }
+
+            //If player health reaches 0 and player is not mid spawn, the player explodes
+            if (player.health <= 0 && !player.spawning) {
+                player.state = 0;
+                   
+                if (true == player.e.Begin(player.x, player.y)) {
+                    playerLives--;
+                }
+
+            }
+            //function calls to conitnue explosion
+            if (player.e.state == 1) {
+                player.e.Move();
+                player.e.Draw();
+                //Once explosion reaches a certain point player will begin to respawn
+                if (player.e.counter > 50) {
+                    player.respawn = true;
+                    player.spawning = true;
+                }
+
+
+            }
+
+            for (int i = 0; i < nObstacle; i++)
+            {
+                if (obstacle[i].state == 1 && obstacle[i].Collide(player) == 1)
+                {
+                    printf("Hit Obstacle!\n");
+                    obstacle[i].state = 0;
+                    player.health--;
+                }
+            }
+
+            for (int i = 0; i < nLife; i++)
+            {
+                if (life[i].state == 1 && life[i].Collide(player) == 1)
+                {
+                    printf("Life Added!\n");
+                    life[i].state = 0;
+                    player.health++;
+                }
+            }
+
+            for (int i = 0; i < nShield; i++)
+            {
+                if (shield[i].state == 1 && shield[i].Collide(player) == 1)
+                {
+                    printf("Shield Collected!\n");
+                    shield[i].state = 0;
+                    shield[i].d = 1;
+
+                    //player.health++;
+                }
+            }
+            for (int i = 0; i < nShield; i++)
+            {
+                if (shield[i].d == 1)
+                {
+                    DrawCircle(player.x, player.y - 5, 30, 0);
+                }
+            }
+            for (auto& e : enemies)
+            {
+                e.Move();
+                e.Draw();
+            }
+
+            int health = player.health;
+
+            char* cstr = new char[player.missileType.length() + 1];
+            strcpy(cstr, player.missileType.c_str());
+
+            //printf("Live = %d",playerLives);
+            //playerLives = 0;
+            if (playerLives != 0)
+            {
+                game.Display(playerLives, score, health, cstr);
+                delete[] cstr;
+            }
+
+            else
+            {
+                auto n = game.EndMenu();
+
+                if (n == 0)
+                {
+                    terminate = 1;
+                }
+                else
+                {
+                    playerLives = 3;
+                }
+            }
+                
+
+            glFlush();
+            FsSwapBuffers();
+            FsSleep(25);
+        }
+       
+    }
+    else
+    {
+        FsCloseWindow();
+    }
+ 
     return 0;
 }
 
+//Ensures all missiles are drawn.
 //Ensures all missiles are drawn.
 void DrawAllMissiles() {
 
@@ -953,14 +1350,50 @@ void DrawAllMissiles() {
         m.Move();
     }
 
-    for (auto& m : missileB)
+    for (auto& m : missileRapid)
     {
         if (m.IsFlying())
         {
             m.Draw();
         }
     }
-    for (auto& m : missileB)
+    for (auto& m : missileRapid)
+    {
+        m.Move();
+    }
+
+    for (auto& m : missileSpreadM)
+    {
+        if (m.IsFlying())
+        {
+            m.Draw();
+        }
+    }
+    for (auto& m : missileSpreadM)
+    {
+        m.Move();
+    }
+
+    for (auto& m : missileSpreadL)
+    {
+        if (m.IsFlying())
+        {
+            m.Draw();
+        }
+    }
+    for (auto& m : missileSpreadL)
+    {
+        m.Move();
+    }
+
+    for (auto& m : missileSpreadR)
+    {
+        if (m.IsFlying())
+        {
+            m.Draw();
+        }
+    }
+    for (auto& m : missileSpreadR)
     {
         m.Move();
     }
@@ -969,7 +1402,7 @@ void DrawAllMissiles() {
 void DrawRect(int blockX, int blockY, int blockSizeX, int blockSizeY)
 {
 
-    glColor3ub(0, 0, 255);
+    /*glColor3ub(0, 0, 255);*/
     glBegin(GL_QUADS);
     glVertex2i(blockX, blockY + blockSizeY);
     glVertex2i(blockX, blockY - blockSizeY);
@@ -1004,7 +1437,7 @@ void DrawCircle(int cx, int cy, int rad, int fill)
     glEnd();
 }
 
-
+//PlayerFunctions
 void Player::Initialize() {
 
     if (state == 0 && spawning) {
@@ -1032,32 +1465,42 @@ void Player::Initialize() {
 
 void Player::Draw()
 {
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, texId[1]);
-
+    glColor3ub(0, 0, 255);
     glBegin(GL_QUADS);
 
-    glTexCoord2d(0.0, 0.0);
-    glVertex2i(x - 20, y - 20);
+    glVertex2i(x - 5, y);
+    glVertex2i(x - 5, y - 19);
+    glVertex2i(x + 4, y - 19);
+    glVertex2i(x + 4, y);
 
-    glTexCoord2d(1.0, 0.0);
-    glVertex2i(x + 20, y - 20);
-
-    glTexCoord2d(1.0, 1.0);
-    glVertex2i(x + 20, y + 20);
-
-    glTexCoord2d(0.0, 1.0);
-    glVertex2i(x - 20, y + 20);
+    glVertex2i(x - 9, y + 4);
+    glVertex2i(x - 9, y - 5);
+    glVertex2i(x + 9, y - 5);
+    glVertex2i(x + 9, y + 4);
 
     glEnd();
-
-    glDisable(GL_TEXTURE_2D);
 }
 
 void Player::Shoot()
 {
     if (missileType == "Standard") {
+
+        int i = 0;
         for (auto& m : missileStandard)
+        {
+            if (true == m.TryShoot(x, y, i))
+            {
+                //player.PlayOneShot(program.missileSE);
+                //++nUsed;
+                break;
+            }
+
+            i++;
+        }
+    }
+
+    if (missileType == "Rapid") {
+        for (auto& m : missileRapid)
         {
             if (true == m.TryShoot(x, y))
             {
@@ -1068,8 +1511,10 @@ void Player::Shoot()
         }
     }
 
-    if (missileType == "B") {
-        for (auto& m : missileB)
+    if (missileType == "Spread") {
+
+
+        for (auto& m : missileSpreadM)
         {
             if (true == m.TryShoot(x, y))
             {
@@ -1077,6 +1522,29 @@ void Player::Shoot()
                 //++nUsed;
                 break;
             }
+
+        }
+
+        for (auto& m : missileSpreadL)
+        {
+            if (true == m.TryShoot(x, y))
+            {
+                //player.PlayOneShot(program.missileSE);
+                //++nUsed;
+                break;
+            }
+
+        }
+
+        for (auto& m : missileSpreadR)
+        {
+            if (true == m.TryShoot(x, y))
+            {
+                //player.PlayOneShot(program.missileSE);
+                //++nUsed;
+                break;
+            }
+
         }
     }
 
@@ -1095,9 +1563,23 @@ void Player::ChangeMissile(string newType) {
 
     }
 
-    if (missileType == "B") {
+    if (missileType == "Rapid") {
 
-        for (auto& m : missileB)
+        for (auto& m : missileRapid)
+        {
+            m.Initialize();
+        }
+
+    }
+
+    if (missileType == "Spread") {
+
+        for (auto& m : missileSpreadM)
+        {
+            m.Initialize();
+        }
+
+        for (auto& m : missileSpreadL)
         {
             m.Initialize();
         }
