@@ -1814,6 +1814,15 @@ int main() {
                 }
             }
 
+            for (int i = 0; i < 7; i++)
+            {
+                while (YSTRUE == dynamicPlayer.IsPlaying(dynamicWav[i]))
+                {
+                    dynamicPlayer.KeepPlaying();
+                }
+
+            }
+
             glFlush();
             FsSwapBuffers();
             FsSleep(25);
