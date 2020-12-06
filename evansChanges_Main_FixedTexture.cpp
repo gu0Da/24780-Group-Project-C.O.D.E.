@@ -16,6 +16,8 @@ Simulate hit: H
 #include <vector>
 #include <time.h>
 #include <math.h>
+#include <sstream>
+#include <cstring>
 
 #include "yspng.h"
 #include "fssimplewindow.h"
@@ -794,7 +796,7 @@ public:
 
 void Weapons::GenerateWeapons()
 {
-    
+
     state = 1;
     x = rand() % 500;
     y = rand() % 500;
@@ -1211,7 +1213,7 @@ int main() {
     std::vector<Life> life;
 
     std::vector<Shield> shield;
-    
+
     std::vector<Coins> coins(nCoins);
     for (int i = 0; i < nCoins; i++)
         coins[i].GenerateCoins();
@@ -1501,8 +1503,8 @@ int main() {
             DrawAllMissiles(); //Ensures all missiles the are shot are drawn independent of what weapon type player is currently holding IE: will draw black missiles still in motion even if player switches to red missiles
 
             player.Initialize(); //does nothing if player state is 1 or not spawning, else will perform respawn behavior and animation
-        
-            
+
+
             while(coinscreen<4)
             {
                 Coins newcoins;
@@ -1515,10 +1517,10 @@ int main() {
                 Obstacles newobstacle;
                 obstacle.emplace_back(newobstacle);
                 newobstacle.GenerateObstacle();
-                obsscreen++; 
+                obsscreen++;
             }
             while(powercount<2)
-            {    
+            {
                 p++;
                 if(p%11==0)
                 {
@@ -1561,7 +1563,7 @@ int main() {
                     Weapons newweapons;
                     newweapons.GenerateWeapons();
                     newweapons.type=3;
-                    weapons.emplace_back(newweapons);   
+                    weapons.emplace_back(newweapons);
                     powercount++;
                 }
                 if(p%17==0)
@@ -1590,8 +1592,8 @@ int main() {
 
             for (int i = 0; i < weapons.size(); i++)
                 weapons[i].Draw();
-            
-            
+
+
 
 
             enemyCount = 0;
@@ -1611,8 +1613,8 @@ int main() {
                 e.Move(player, missileStandard, missileRapid, missileSpreadM, missileSpreadL, missileSpreadR, shield);
                 e.Draw();
             }
-            
-            
+
+
             //Health bar for demoing
             //if (player.health > 0) DrawRect(40, 120, 10 * player.health, 20);
 
@@ -1680,7 +1682,7 @@ int main() {
                             obsscreen--;
                         }
                     }
-                        
+
                     else
                     {
                       //sound-obstacle collision
@@ -1743,7 +1745,10 @@ int main() {
 
             //printf("Live = %d",playerLives);
             char num[3];
-            itoa(score, num, 10);
+            //itoa(score, num, 10);
+            string numString=to_string(score);
+            strcpy(num,numString.c_str());
+
             if(playerLives!=0)
             {
                 game.Display(playerLives, num, health, cstr);

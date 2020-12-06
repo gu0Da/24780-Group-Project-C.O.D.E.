@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "yspng.h"
 #include "InGameMenu.h"
+#include <cstring>
 
 TextString::TextString()
 {
