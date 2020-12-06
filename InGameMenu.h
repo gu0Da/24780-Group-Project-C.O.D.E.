@@ -31,13 +31,14 @@ class InGameMenu
 {
 public:
 	int level;
-	int key;
+	int lastKey;
 	TextString showlevel;
 	TextString showweapon;
 	TextString showscore;
 	TextString showresult;
 	void AddText(int level, int score, int health, char* weapon);
 	void Display(int level, int score, int health, char* weapon);
+	int EndMenu(void);
 };
 #pragma once
 #endif
