@@ -17,9 +17,9 @@ void GameMenu::DrawSelection(int choice)
 	case 2:
 		y = 490;
 		break;
-	case 3:
-		y = 590;
-		break;
+	//case 3:
+	//	y = 590;
+	//	break;
 	}
 
 	glColor3ub(255, 128, 0);
@@ -61,16 +61,16 @@ int GameMenu::Background(void)
 		//glRasterPos2d(500, 300);
 		glRasterPos2d(400, 400);
 		YsGlDrawFontBitmap16x24("Start");
+		//glRasterPos2d(400, 500);
+		//YsGlDrawFontBitmap16x24("Tutorial");
 		glRasterPos2d(400, 500);
-		YsGlDrawFontBitmap16x24("Tutorial");
-		glRasterPos2d(400, 600);
 		YsGlDrawFontBitmap16x24("Exit");
 
 		if (key == FSKEY_UP && choice > 1) 
 		{
 			choice -= 1;
 		}
-		if (key == FSKEY_DOWN && choice < 3) 
+		if (key == FSKEY_DOWN && choice < 2) 
 		{
 			choice += 1;
 		}
