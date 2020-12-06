@@ -254,7 +254,7 @@ int InGameMenu::EndMenu(void)
         YsGlDrawFontBitmap20x32("Play Again?");
 
         glRasterPos2d(180, 600);
-        YsGlDrawFontBitmap16x24("ENTER to Menu");
+        YsGlDrawFontBitmap16x24("ENTER to Game");
         glRasterPos2d(190, 700);
         YsGlDrawFontBitmap16x24("ESC to Exit");
 
