@@ -1632,6 +1632,7 @@ int main() {
 
                 if (true == player.e.Begin(player.x, player.y)) {
                     playerLives--;
+                    //Explosion sound effect
                 }
 
             }
