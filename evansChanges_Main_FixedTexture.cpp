@@ -1397,8 +1397,18 @@ int main() {
             {
                 if(obstacle[i].state==1 && obstacle[i].Collide(player)==1&&!player.spawning)
                 {
-                    if(shield.back().d==1&&shield.back().n>0)
-                      obstacle[i].state=1;
+                    if(!shield.empty())
+                    {
+                        if(shield.back().d==1&&shield.back().n>0)
+                            obstacle[i].state=1;
+                        else
+                        {
+                            //sound-obstacle collision
+                            obstacle[i].state=0;
+                            obsscreen--;
+                        }
+                    }
+                        
                     else
                     {
                       //sound-obstacle collision
