@@ -1150,7 +1150,7 @@ void standardEnemy::Draw()
 {
     for (auto& m : missilesFired) {
         if (m.state == 1) {
-            glColor3ub(0, 0, 0);
+            /*glColor3ub(0, 0, 0);*/
             glBegin(GL_QUADS);
             glVertex2i(m.x - m.xSize, m.y - m.ySize);
             glVertex2i(m.x + m.xSize, m.y - m.ySize);
@@ -1162,7 +1162,7 @@ void standardEnemy::Draw()
 
     if (state > 0) {
         // just drawing a basic shape for now
-        glColor3ub(255, 0, 0);
+        /*glColor3ub(255, 0, 0);
         glBegin(GL_QUADS);
 
         glVertex2i(x - xSize, y - ySize);
@@ -1170,7 +1170,27 @@ void standardEnemy::Draw()
         glVertex2i(x + xSize, y + ySize);
         glVertex2i(x - xSize, y + ySize);
 
+        glEnd();*/
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, texId[2]);
+
+        glBegin(GL_QUADS);
+
+        glTexCoord2d(0.0, 0.0);
+        glVertex2i(x - 27, y - 38);
+
+        glTexCoord2d(1.0, 0.0);
+        glVertex2i(x + 27, y - 38);
+
+        glTexCoord2d(1.0, 1.0);
+        glVertex2i(x + 27, y + 38);
+
+        glTexCoord2d(0.0, 1.0);
+        glVertex2i(x - 27, y + 38);
+
         glEnd();
+
+        glDisable(GL_TEXTURE_2D);
     }
 
 }
@@ -1809,23 +1829,23 @@ int main() {
             //printf("Live = %d",playerLives);
             char num[3];
             //itoa(score, num, 10);
-            string numString=to_string(score);
-            strcpy(num,numString.c_str());
-            if(playerLives!=0)
+            string numString = to_string(score);
+            strcpy(num, numString.c_str());
+            if (playerLives != 0)
             {
                 game.Display(playerLives, num, health, cstr);
                 delete[] cstr;
             }
             else
             {
-                auto n=game.EndMenu();
-                if(n==0)
+                auto n = game.EndMenu();
+                if (n == 0)
                 {
-                    terminate=1;
+                    terminate = 1;
                 }
                 else
                 {
-                    playerLives=3;
+                    playerLives = 3;
                     score = 0;
                 }
             }
