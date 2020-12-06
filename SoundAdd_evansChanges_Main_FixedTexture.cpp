@@ -1811,6 +1811,7 @@ int main() {
             //itoa(score, num, 10);
             string numString=to_string(score);
             strcpy(num,numString.c_str());
+            if(playerLives!=0)
             {
                 game.Display(playerLives, num, health, cstr);
                 delete[] cstr;
