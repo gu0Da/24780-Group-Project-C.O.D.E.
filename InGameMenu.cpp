@@ -163,7 +163,7 @@ const char* TextString::Fgets(FILE* fp)
     }
 }
 
-void InGameMenu::AddText(int level, int score, int health, char* weapon)
+void InGameMenu::AddText(int level, char* score, int health, char* weapon)
 {
     showlevel.CleanUp();
     showweapon.CleanUp();
@@ -171,7 +171,7 @@ void InGameMenu::AddText(int level, int score, int health, char* weapon)
     showlevel.Add("Live: ");
     showlevel.Add(level + '0');
     showscore.Add("Score: ");
-    showscore.Add(score + '0');
+    showscore.Add(score);
     showweapon.Add("Weapon: ");
     showweapon.Add(weapon);
 }
@@ -274,7 +274,7 @@ int InGameMenu::EndMenu(void)
 }
 
 
-void InGameMenu::Display(int level, int score, int health, char* weapon)
+void InGameMenu::Display(int level, char* score, int health, char* weapon)
 {
     //char pattern[] =
     //{
